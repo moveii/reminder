@@ -6,6 +6,7 @@
     <groupId>at.spengergasse.nvs</groupId>
     <artifactId>reminder</artifactId>
     <version>0.0.1-SNAPSHOT</version>
+    <packaging>pom</packaging>
 
     <modules>
         <module>server</module>
