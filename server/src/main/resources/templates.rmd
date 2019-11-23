@@ -1,0 +1,13 @@
+[DURATION] [UNIT] vor dem [DATE] um [TIME] [TEXT];-
+[DURATION] [UNIT] nach dem [DATE] um [TIME] [TEXT];+
+
+in [DURATION] [UNIT] um [TIME] [TEXT];+
+in [DURATION] [UNIT] [TEXT];+
+
+[DURATION] [UNIT] vor dem [DATE] [TEXT];-
+[DURATION] [UNIT] nach dem [DATE] [TEXT];+
+
+am [DATE] um [TIME] [TEXT];
+am [DATE] [TEXT];
+
+[DATE] [TEXT];

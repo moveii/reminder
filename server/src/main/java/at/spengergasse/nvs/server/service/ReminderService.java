@@ -23,6 +23,7 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class ReminderService {
 
+    private final TemplateService templateService;
     private final ReminderRepository reminderRepository;
     private final ModelMapper modelMapper;
 
@@ -60,11 +61,12 @@ public class ReminderService {
      *
      * @param reminderDto the reminderDto from which a reminder should be created
      * @return the reminderDto filled with all information to be able to display it
+     * @see TemplateService
      */
-    public Optional<ReminderDto> createReminder(ReminderDto reminderDto) {
+    public Optional<ReminderDto> createReminder(ReminderDto reminderDto, String username) {
         return Optional
                 .of(reminderDto)
-                .map(Reminder::new)
+                .map(dto -> templateService.convert(dto, username))
                 .map(reminderRepository::save)
                 .map(model -> modelMapper.map(model, ReminderDto.class));
     }
