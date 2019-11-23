@@ -7,16 +7,32 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * A template is generated
+ * The {@code Templates} are generated at program startup from the templates.rmd file.
  */
 
 @Getter
 public class Template {
 
+    /**
+     * This list of strings contains all matchers (e.g. [DATE]) which need to be matched to fulfill this template.
+     */
     private List<String> matchers;
-    private String[] replace;
-    private boolean plus;
 
+    /**
+     * This string array contains all extra words in the template, which need to be replaced to fulfill this template.
+     */
+    private String[] replace;
+
+    /**
+     * If this fields value is true, the duration is added to the date/time. Otherwise it is subtracted.
+     */
+    private boolean addition;
+
+    /**
+     * The constructor converts the given text to a {@code Template}.
+     *
+     * @param text the text, which was entered by the user.
+     */
     public Template(String text) {
         String[] splittedText = text.split(";");
 
@@ -39,9 +55,14 @@ public class Template {
                 .map(string -> string.concat(" "))
                 .toArray(String[]::new);
 
-        plus = splittedText[1].contains("+");
+        addition = splittedText[1].contains("+");
     }
 
+    /**
+     * This method returns an array of empty strings, whose length equals the length of the matcher list.
+     *
+     * @return an array of emtpy strings, whose length equals the length of the matcher list.
+     */
     public String[] emptyArray() {
         int length = replace.length;
         String[] array = new String[length];
