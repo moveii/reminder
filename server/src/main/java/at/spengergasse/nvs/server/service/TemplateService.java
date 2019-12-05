@@ -177,8 +177,8 @@ public class TemplateService {
      * Tries to translate the unit entered by the user to a unit which is understood by the system. These translations are
      * specified in the definitions.rmd file.
      *
-     * @param unit
-     * @return the unit
+     * @param unit the unit which is tried to be translated
+     * @return the translated unit
      */
     private String handleUnit(String unit) {
         return find(unit, true);

@@ -6,7 +6,7 @@ import at.spengergasse.nvs.server.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
  * @see Reminder
  */
 
-@Component
+@Service
 @RequiredArgsConstructor
 public class ReminderService {
 
