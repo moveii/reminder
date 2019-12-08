@@ -73,7 +73,7 @@ public class ReminderController {
     }
 
     /**
-     * Returns the modified reminder when called via a HTTP-PUT-REQUEST.
+     * Returns the modified reminder when called via a HTTP-PUT-REQUEST. Only the text should be updated!
      *
      * @param reminderDto the modified reminderDto
      * @return the modified reminder
