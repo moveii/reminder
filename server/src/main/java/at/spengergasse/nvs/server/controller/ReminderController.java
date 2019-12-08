@@ -1,6 +1,7 @@
 package at.spengergasse.nvs.server.controller;
 
 import at.spengergasse.nvs.server.dto.ReminderDto;
+import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.service.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +30,7 @@ public class ReminderController {
      */
     @GetMapping
     public List<ReminderDto> findAllReminders() {
-        return reminderService.findAllReminders("");
+        return reminderService.findAllReminders("testuser123"); // will be replaced with proper authentication later
     }
 
     /**
@@ -40,7 +41,7 @@ public class ReminderController {
      */
     @GetMapping(path = "{dateTime}")
     public List<ReminderDto> findAllRemindersByDateAndTime(@PathVariable LocalDateTime dateTime) {
-        return reminderService.findAllRemindersByDateAndTime(dateTime, "");
+        return reminderService.findAllRemindersByDateAndTime(dateTime, "testuser123"); // will be replaced with proper authentication later
     }
 
     /**
@@ -52,7 +53,11 @@ public class ReminderController {
      */
     @GetMapping(path = "/register")
     public SseEmitter register() {
-        return reminderService.registerClient(null);
+        User user = User.builder() // only for testing purposes
+                .username("testuser123")
+                .password("thispasswordissuper")
+                .build();
+        return reminderService.registerClient(user);
     }
 
     /**
@@ -64,7 +69,7 @@ public class ReminderController {
      */
     @PostMapping
     public ResponseEntity<ReminderDto> createReminder(@RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.createReminder(reminderDto, ""));
+        return ResponseEntity.of(reminderService.createReminder(reminderDto, "testuser123")); // will be replaced with proper authentication later
     }
 
     /**

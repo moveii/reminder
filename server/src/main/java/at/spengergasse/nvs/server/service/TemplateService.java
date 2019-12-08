@@ -66,7 +66,7 @@ public class TemplateService {
         ReminderDto matchedReminder = matchTemplate(reminderDto);
 
         Optional<User> userOptional = userRepository.findById(username);
-        User user = userOptional.orElseThrow(RuntimeException::new);
+        User user = userOptional.orElseThrow(() -> new IllegalArgumentException("No user " + username + " found!"));
 
         return Reminder
                 .builder()
@@ -371,6 +371,14 @@ public class TemplateService {
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
+
+        // ONLY FOR TESTING PURPOSES! WILL BE REPLACED WITH PROPER AUTHENTICATION LATER
+        User user = User.builder()
+                .username("testuser123")
+                .password("thispasswordissuper")
+                .build();
+
+        userRepository.save(user);
     }
 
     /**
