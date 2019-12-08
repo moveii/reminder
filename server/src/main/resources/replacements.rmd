@@ -1,0 +1,3 @@
+abgeben=abzugeben
+
+Netzwerktechnik=nvs
