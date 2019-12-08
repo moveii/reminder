@@ -57,7 +57,7 @@ public class ReminderController {
                 .username("testuser123")
                 .password("thispasswordissuper")
                 .build();
-        return reminderService.registerClient(user);
+        return reminderService.registerClient(user.getUsername());
     }
 
     /**

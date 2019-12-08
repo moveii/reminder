@@ -2,7 +2,6 @@ package at.spengergasse.nvs.server.service;
 
 import at.spengergasse.nvs.server.dto.ReminderDto;
 import at.spengergasse.nvs.server.model.Reminder;
-import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -13,7 +12,9 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.transaction.Transactional;
 import java.io.IOException;
+import java.time.Clock;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
@@ -35,7 +36,7 @@ public class ReminderService {
     private final ReminderRepository reminderRepository;
     private final ModelMapper modelMapper;
 
-    private HashMap<User, SseEmitter> sseEmitters = new HashMap<>();
+    private HashMap<String, SseEmitter> sseEmitters = new HashMap<>();
 
     /**
      * This method returns all reminders form the given user.
@@ -112,16 +113,16 @@ public class ReminderService {
      * @return the registered {@code SseEmitter} linked to he given user
      * @see SseEmitter
      **/
-    public SseEmitter registerClient(User user) {
+    public SseEmitter registerClient(String user) {
         SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
         sseEmitter.onCompletion(() -> sseEmitters.remove(user, sseEmitter));
         sseEmitter.onError(throwable -> {
             sseEmitters.remove(user, sseEmitter);
-            log.warn("SSE-Error: {} for {}", throwable.getLocalizedMessage(), user.getUsername());
+            log.warn("SSE-Error: {} for {}", throwable.getLocalizedMessage(), user);
         });
         sseEmitter.onTimeout(() -> {
             sseEmitters.remove(user, sseEmitter);
-            log.warn("SSE-Timeout for {}", user.getUsername());
+            log.warn("SSE-Timeout for {}", user);
         });
 
         sseEmitters.computeIfPresent(user, (user_temp, sseEmitter_temp) -> {
@@ -140,7 +141,7 @@ public class ReminderService {
     @Scheduled(cron = "0 * * * * *")
     public void checkForDueReminders() {
         reminderRepository
-                .findAllByReminderDateTime(LocalDateTime.now())
+                .findAllByReminderDateTime(LocalDateTime.now(Clock.tickMinutes(ZoneId.systemDefault())))
                 .forEach(this::handleDueReminders);
     }
 
@@ -150,17 +151,17 @@ public class ReminderService {
      * @param reminder the due reminder
      */
     private void handleDueReminders(Reminder reminder) {
-        this.sseEmitters.computeIfPresent(reminder.getUser(), (user, sseEmitter) -> {
-                    Optional
-                            .of(reminder)
-                            .map(model -> modelMapper.map(model, ReminderDto.class))
-                            .ifPresent(reminderDto -> {
-                                try {
-                                    sseEmitter.send(reminderDto);
-                                } catch (IOException e) {
-                                    log.warn("Could not send {} to user {}.", reminder.getIdentifier(), user.getUsername());
-                                }
-                            });
+        this.sseEmitters.computeIfPresent(reminder.getUser().getUsername(), (user, sseEmitter) -> {
+            Optional
+                    .of(reminder)
+                    .map(model -> modelMapper.map(model, ReminderDto.class))
+                    .ifPresent(reminderDto -> {
+                        try {
+                            sseEmitter.send(reminderDto);
+                        } catch (IOException e) {
+                            log.warn("Could not send {} to user {}.", reminder.getIdentifier(), user);
+                        }
+                    });
                     return sseEmitter;
                 }
         );
