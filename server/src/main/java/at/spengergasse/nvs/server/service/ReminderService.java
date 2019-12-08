@@ -2,13 +2,18 @@ package at.spengergasse.nvs.server.service;
 
 import at.spengergasse.nvs.server.dto.ReminderDto;
 import at.spengergasse.nvs.server.model.Reminder;
+import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.ReminderRepository;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.modelmapper.ModelMapper;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import java.io.IOException;
 import java.time.LocalDateTime;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -19,6 +24,7 @@ import java.util.stream.Collectors;
  * @see Reminder
  */
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class ReminderService {
@@ -26,6 +32,8 @@ public class ReminderService {
     private final TemplateService templateService;
     private final ReminderRepository reminderRepository;
     private final ModelMapper modelMapper;
+
+    private HashMap<User, SseEmitter> sseEmitters = new HashMap<>();
 
     /**
      * This method returns all reminders form the given user.
@@ -95,6 +103,34 @@ public class ReminderService {
     }
 
     /**
+     * Registers a {@code SseEmitter} and links it to the given user. If the same user logs in again while the other stream
+     * is running, the stream will be stopped and a new one will be started.
+     *
+     * @param user the authenticated user requesting a server-side event-stream
+     * @return the registered {@code SseEmitter} linked to he given user
+     * @see SseEmitter
+     **/
+    public SseEmitter registerClient(User user) {
+        SseEmitter sseEmitter = new SseEmitter(Long.MAX_VALUE);
+        sseEmitter.onCompletion(() -> sseEmitters.remove(user, sseEmitter));
+        sseEmitter.onError(throwable -> {
+            sseEmitters.remove(user, sseEmitter);
+            log.warn("SSE-Error: {} for {}", throwable.getLocalizedMessage(), user.getUsername());
+        });
+        sseEmitter.onTimeout(() -> {
+            sseEmitters.remove(user, sseEmitter);
+            log.warn("SSE-Timeout for {}", user.getUsername());
+        });
+
+        sseEmitters.computeIfPresent(user, (user_temp, sseEmitter_temp) -> {
+            sseEmitter_temp.complete();
+            return sseEmitter_temp;
+        });
+
+        return sseEmitters.put(user, sseEmitter);
+    }
+
+    /**
      * This method checks every minute for due reminders.
      *
      * @see Scheduled
@@ -107,11 +143,24 @@ public class ReminderService {
     }
 
     /**
-     * This method handles due reminders by sending events to the client.
+     * This method handles due reminders by sending events to the authenticated client.
      *
      * @param reminder the due reminder
      */
     private void handleDueReminders(Reminder reminder) {
-        // TODO implement SseEmitters
+        this.sseEmitters.computeIfPresent(reminder.getUser(), (user, sseEmitter) -> {
+                    Optional
+                            .of(reminder)
+                            .map(model -> modelMapper.map(model, ReminderDto.class))
+                            .ifPresent(reminderDto -> {
+                                try {
+                                    sseEmitter.send(reminderDto);
+                                } catch (IOException e) {
+                                    log.warn("Could not send {} to user {}.", reminder.getIdentifier(), user.getUsername());
+                                }
+                            });
+                    return sseEmitter;
+                }
+        );
     }
 }
