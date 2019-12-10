@@ -4,8 +4,8 @@ export class Reminder {
     this.text = text;
   }
 
-  private identifier: string;
-  private text: string;
-  private reminderDateTime: Date;
+  identifier: string;
+  text: string;
+  reminderDateTime: Date;
 
 }

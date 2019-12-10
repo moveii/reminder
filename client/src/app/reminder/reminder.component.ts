@@ -1,8 +1,8 @@
 import {Component, OnInit, ViewChild} from '@angular/core';
 import {HttpService} from '../service/http.service';
 import {Reminder} from '../dto/reminder';
-import {MatTableDataSource} from '@angular/material/table';
 import {MatSort} from '@angular/material/sort';
+import {FormControl} from '@angular/forms';
 
 @Component({
   selector: 'app-reminder',
@@ -11,33 +11,63 @@ import {MatSort} from '@angular/material/sort';
 })
 export class ReminderComponent implements OnInit {
 
-  dataSource: MatTableDataSource<Reminder> = new MatTableDataSource<Reminder>();
-  displayedColumns: string[] = ['text', 'date'];
-
-  private data: Reminder[] = [];
+  date: Date = new Date();
+  mouseover: boolean[] = [];
+  filterInput: string;
+  filteredData: Reminder[] = [];
+  inputForm: FormControl = new FormControl('');
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
+  private data: Reminder[] = [];
 
   constructor(public httpService: HttpService) {
   }
 
   ngOnInit() {
-    this.dataSource.sort = this.sort;
     this.httpService.findAllRemindersByDateAndTime().subscribe((value: Reminder[]) => {
       this.data = value;
-      this.dataSource.data = this.data;
+      this.applyFilter();
     });
+
+    this.startClockInterval();
   }
 
-  applyFilter(filterValue: string) {
-    this.dataSource.filter = filterValue.trim().toLowerCase();
+  private startClockInterval(): void {
+    setInterval(() => {
+      this.date = new Date();
+    }, 1000);
   }
 
-  public sendReminder(reminderText: string): void {
+  applyFilter(): void {
+    if (!this.filterInput || this.filterInput.length === 0) {
+      this.filteredData = this.data;
+    } else {
+      this.filteredData = this.data.filter(reminder => reminder.text.toLowerCase().indexOf(this.filterInput.trim().toLowerCase()) !== -1);
+    }
+  }
+
+  sendReminder(reminderText: string): void {
     const reminder = new Reminder(reminderText);
     this.httpService.createReminder(reminder).subscribe(value => {
       this.data.push(value);
-      this.dataSource.data = this.data;
+    }, error => {
+      if (error.status === 500) {
+        this.inputForm.setErrors({template: true});
+      } else {
+        console.error(error);
+      }
     });
+  }
+
+  deleteReminder(reminder: Reminder): void {
+    this.httpService.deleteReminder(reminder).subscribe(() => {
+      const index = this.data.indexOf(reminder);
+      this.data = this.data.splice(index, 1);
+      this.applyFilter();
+    });
+  }
+
+  editReminder(reminder: Reminder): void {
+
   }
 }

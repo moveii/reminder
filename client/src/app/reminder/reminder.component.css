@@ -2,16 +2,15 @@
   width: 100%;
 }
 
-.reminder-input-div {
-  display: flex;
-  flex-direction: row;
-}
-
 .reminder-save {
   display: flex;
   align-items: center;
 }
 
-.reminder-table-element {
-  width: 100%;
+.list-selection {
+  background-color: lightgrey;
+}
+
+.reminder-send {
+  margin-left: 0.5%;
 }

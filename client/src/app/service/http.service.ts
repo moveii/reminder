@@ -8,7 +8,7 @@ import {Reminder} from '../dto/reminder';
 })
 export class HttpService {
 
-  private baseUrl = '/reminders';
+  private baseUrl = '/reminders/';
 
   constructor(public httpClient: HttpClient) {
   }
@@ -29,7 +29,7 @@ export class HttpService {
     return this.httpClient.put<Reminder>(this.baseUrl, reminder);
   }
 
-  public deleteReminder(reminder: Reminder): void {
-    this.httpClient.delete(this.baseUrl);
+  public deleteReminder(reminder: Reminder): Observable<any> {
+    return this.httpClient.delete(this.baseUrl + `${reminder.identifier}`);
   }
 }

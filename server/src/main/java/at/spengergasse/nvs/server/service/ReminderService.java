@@ -101,7 +101,7 @@ public class ReminderService {
      * @param identifier the identifier from the reminder to delete
      */
     public void deleteReminder(String identifier) {
-        reminderRepository.deleteById(identifier);
+        reminderRepository.findById(identifier).ifPresent(reminder -> reminderRepository.deleteById(reminder.getIdentifier()));
     }
 
     /**

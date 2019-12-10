@@ -9,17 +9,18 @@ import {MatFormFieldModule} from '@angular/material/form-field';
 import {MatInputModule} from '@angular/material/input';
 import {MatCardModule} from '@angular/material/card';
 import {MatButtonModule} from '@angular/material/button';
-import {ReminderListComponent} from './reminder-list/reminder-list.component';
 import {HttpClientModule} from '@angular/common/http';
 import {MatListModule} from '@angular/material/list';
 import {MatTableModule} from '@angular/material/table';
 import {MatSortModule} from '@angular/material/sort';
+import {MatIconModule} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FlexModule} from '@angular/flex-layout';
 
 @NgModule({
   declarations: [
     AppComponent,
-    ReminderComponent,
-    ReminderListComponent
+    ReminderComponent
   ],
   imports: [
     BrowserModule,
@@ -32,7 +33,11 @@ import {MatSortModule} from '@angular/material/sort';
     MatButtonModule,
     MatListModule,
     MatTableModule,
-    MatSortModule
+    MatSortModule,
+    MatIconModule,
+    FormsModule,
+    FlexModule,
+    ReactiveFormsModule
   ],
   providers: [],
   bootstrap: [AppComponent]
