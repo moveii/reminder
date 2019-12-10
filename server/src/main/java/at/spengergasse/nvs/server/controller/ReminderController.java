@@ -8,7 +8,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -17,7 +16,7 @@ import java.util.List;
 
 @CrossOrigin("http://localhost:4200")
 @RestController
-@RequestMapping(path = "reminder")
+@RequestMapping(path = "reminders")
 @RequiredArgsConstructor
 public class ReminderController {
 
@@ -28,20 +27,19 @@ public class ReminderController {
      *
      * @return all reminders of the authenticated user
      */
-    @GetMapping
+    @GetMapping(path = "all")
     public List<ReminderDto> findAllReminders() {
         return reminderService.findAllReminders("testuser123"); // will be replaced with proper authentication later
     }
 
     /**
-     * Returns all reminders after the given date and time of the authenticated user when called via a HTTP-GET-REQUEST.
+     * Returns all reminders of the authenticated user whose date is in the future when called via a HTTP-GET-REQUEST.
      *
-     * @param dateTime the minimum date and time of the reminders
-     * @return all reminders of the authenticated user after the given date and time
+     * @return all reminders of the authenticated user whose date is in the future
      */
-    @GetMapping(path = "{dateTime}")
-    public List<ReminderDto> findAllRemindersByDateAndTime(@PathVariable LocalDateTime dateTime) {
-        return reminderService.findAllRemindersByDateAndTime(dateTime, "testuser123"); // will be replaced with proper authentication later
+    @GetMapping
+    public List<ReminderDto> findAllRemindersByDateAndTime() {
+        return reminderService.findAllRemindersByDateAndTime("testuser123"); // will be replaced with proper authentication later
     }
 
     /**

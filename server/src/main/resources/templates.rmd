@@ -8,6 +8,7 @@ in [DURATION] [UNIT] [TEXT];+
 [DURATION] [UNIT] nach dem [DATE] [TEXT];+
 
 am [DATE] um [TIME] [TEXT];
-am [DATE] [TEXT];
+[DATE] um [TIME] [TEXT];
 
+am [DATE] [TEXT];
 [DATE] [TEXT];

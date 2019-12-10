@@ -53,15 +53,14 @@ public class ReminderService {
     }
 
     /**
-     * This method returns all reminders after the given date and time from the given user.
+     * This method returns all reminders whose date is in the future from the given user.
      *
-     * @param reminderDateTime the date and time
-     * @param username         the username of the user
+     * @param username the username of the user
      * @return all reminders after the given date and time from the given user.
      */
-    public List<ReminderDto> findAllRemindersByDateAndTime(LocalDateTime reminderDateTime, String username) {
+    public List<ReminderDto> findAllRemindersByDateAndTime(String username) {
         return reminderRepository
-                .findAllByReminderDateTimeAfterAndUserUsername(reminderDateTime, username)
+                .findAllByReminderDateTimeAfterAndUserUsername(LocalDateTime.now(), username)
                 .stream()
                 .map(model -> modelMapper.map(model, ReminderDto.class))
                 .collect(Collectors.toList());
@@ -152,16 +151,16 @@ public class ReminderService {
      */
     private void handleDueReminders(Reminder reminder) {
         this.sseEmitters.computeIfPresent(reminder.getUser().getUsername(), (user, sseEmitter) -> {
-            Optional
-                    .of(reminder)
-                    .map(model -> modelMapper.map(model, ReminderDto.class))
-                    .ifPresent(reminderDto -> {
-                        try {
-                            sseEmitter.send(reminderDto);
-                        } catch (IOException e) {
-                            log.warn("Could not send {} to user {}.", reminder.getIdentifier(), user);
-                        }
-                    });
+                    Optional
+                            .of(reminder)
+                            .map(model -> modelMapper.map(model, ReminderDto.class))
+                            .ifPresent(reminderDto -> {
+                                try {
+                                    sseEmitter.send(reminderDto);
+                                } catch (IOException e) {
+                                    log.warn("Could not send {} to user {}.", reminder.getIdentifier(), user);
+                                }
+                            });
                     return sseEmitter;
                 }
         );

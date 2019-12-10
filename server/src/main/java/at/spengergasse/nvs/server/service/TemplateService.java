@@ -109,6 +109,9 @@ public class TemplateService {
 
             String replacedText = StringUtils.replaceEach(unmatchedText, template.getReplace(), template.emptyArray());
             String[] splittedText = replacedText.split(" ");
+            splittedText = Arrays.stream(splittedText)
+                    .filter(string -> !string.equalsIgnoreCase("uhr"))
+                    .toArray(String[]::new);
 
             List<String> matchers = template.getMatchers();
 
