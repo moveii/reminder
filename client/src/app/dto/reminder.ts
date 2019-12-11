@@ -7,5 +7,6 @@ export class Reminder {
   identifier: string;
   text: string;
   reminderDateTime: Date;
+  selected: boolean = false;
 
 }

@@ -12,7 +12,6 @@ import {FormControl} from '@angular/forms';
 export class ReminderComponent implements OnInit {
 
   date: Date = new Date();
-  mouseover: boolean[] = [];
   filterInput: string;
   filteredData: Reminder[] = [];
   inputForm: FormControl = new FormControl('');
@@ -62,7 +61,7 @@ export class ReminderComponent implements OnInit {
   deleteReminder(reminder: Reminder): void {
     this.httpService.deleteReminder(reminder).subscribe(() => {
       const index = this.data.indexOf(reminder);
-      this.data = this.data.splice(index, 1);
+      this.data.splice(index, 1);
       this.applyFilter();
     });
   }

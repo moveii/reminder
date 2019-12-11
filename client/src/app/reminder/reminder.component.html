@@ -7,7 +7,7 @@
           <span matPrefix>Erinnere mich&nbsp;</span>
           <mat-hint align="end">{{input.value.length}} / 64</mat-hint>
           <mat-error *ngIf="inputForm.hasError('template')">
-            Dieses Format entspricht keiner Vorlage! Überprüfen Sie Ihre Eingabe auf grammatikalische Richtigkeit.
+            Dieses Format entspricht keiner Vorlage! Ueberprüfen Sie Ihre Eingabe auf grammatikalische Richtigkeit.
           </mat-error>
         </mat-form-field>
 
@@ -24,9 +24,10 @@
       </mat-form-field>
 
       <mat-list>
-        <mat-list-item *ngFor="let reminder of filteredData; let i = index" (mouseover)="mouseover[i] = true"
-                       (mouseleave)="mouseover[i] = false" [class.list-selection]="mouseover[i]">
-          <mat-icon matListIcon *ngIf="(reminder.reminderDateTime | date: 'yyyy-MM-dd HH:mm') > date">alarm</mat-icon>
+        <mat-list-item *ngFor="let reminder of filteredData; let i = index" (mouseover)="reminder.selected = true"
+                       (mouseleave)="reminder.selected = false" [class.list-selection]="reminder.selected"
+                       (click)="editReminder(reminder)">
+          <mat-icon matListIcon>alarm</mat-icon>
           <mat-icon matListIcon *ngIf="(reminder.reminderDateTime | date: 'yyyy-MM-dd HH:mm') <= date">alarm_off
           </mat-icon>
           <h4 matLine><strong>{{reminder.text}}</strong></h4>
@@ -34,9 +35,6 @@
             <span>{{reminder.reminderDateTime | date:'dd. MMMM yyyy HH:mm'}}</span>
           </p>
           <span class="fill"></span>
-          <button mat-icon-button (click)="editReminder(reminder)">
-            <mat-icon>edit</mat-icon>
-          </button>
           <button mat-icon-button color="warn" (click)="deleteReminder(reminder)">
             <mat-icon>delete</mat-icon>
           </button>
