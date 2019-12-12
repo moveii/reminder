@@ -16,11 +16,16 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatIconModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexModule} from '@angular/flex-layout';
+import {ReminderEditComponent} from './reminder-edit/reminder-edit.component';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+import {MatNativeDateModule} from '@angular/material/core';
+import {MatMomentDateModule} from "@angular/material-moment-adapter";
 
 @NgModule({
   declarations: [
     AppComponent,
-    ReminderComponent
+    ReminderComponent,
+    ReminderEditComponent
   ],
   imports: [
     BrowserModule,
@@ -37,7 +42,10 @@ import {FlexModule} from '@angular/flex-layout';
     MatIconModule,
     FormsModule,
     FlexModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatNativeDateModule,
+    MatMomentDateModule,
+    MatDatepickerModule
   ],
   providers: [],
   bootstrap: [AppComponent]

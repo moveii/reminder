@@ -16,6 +16,7 @@
           </button>
         </div>
       </div>
+      <app-reminder-edit *ngIf="selectedReminder" [selectedReminder]="selectedReminder"></app-reminder-edit>
     </div>
     <mat-divider vertical></mat-divider>
     <div fxFlex>
@@ -26,7 +27,7 @@
       <mat-list>
         <mat-list-item *ngFor="let reminder of filteredData; let i = index" (mouseover)="reminder.selected = true"
                        (mouseleave)="reminder.selected = false" [class.list-selection]="reminder.selected"
-                       (click)="editReminder(reminder)">
+                       (click)="editReminder(reminder); selectedReminder = reminder">
           <mat-icon matListIcon>alarm</mat-icon>
           <mat-icon matListIcon *ngIf="(reminder.reminderDateTime | date: 'yyyy-MM-dd HH:mm') <= date">alarm_off
           </mat-icon>

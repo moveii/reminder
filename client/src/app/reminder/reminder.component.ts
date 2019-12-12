@@ -12,6 +12,7 @@ import {FormControl} from '@angular/forms';
 export class ReminderComponent implements OnInit {
 
   date: Date = new Date();
+  selectedReminder: Reminder;
   filterInput: string;
   filteredData: Reminder[] = [];
   inputForm: FormControl = new FormControl('');
