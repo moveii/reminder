@@ -15,6 +15,11 @@ export const MY_FORMATS = {
   },
 };
 
+/**
+ * Contains the logic for displaying all editing forms.
+ */
+
+
 @Component({
   selector: 'app-reminder-edit',
   templateUrl: './reminder-edit.component.html',
