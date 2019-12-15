@@ -63,6 +63,7 @@ export class ReminderComponent implements OnInit {
     this.httpService.deleteReminder(reminder).subscribe(() => {
       const index = this.data.indexOf(reminder);
       this.data.splice(index, 1);
+      this.selectedReminder = undefined;
       this.applyFilter();
     });
   }
