@@ -16,7 +16,7 @@
     <properties>
         <java.version>13</java.version>
 
-        <oauth2.version>2.2.2.RELEASE</oauth2.version>
+        <oauth2.version>2.2.5.RELEASE</oauth2.version>
 
         <modelmapper.version>2.3.5</modelmapper.version>
         <apache-commons.version>3.9</apache-commons.version>
