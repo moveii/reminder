@@ -9,6 +9,7 @@ import java.time.LocalDateTime;
  */
 
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 @AllArgsConstructor(access = AccessLevel.PRIVATE)

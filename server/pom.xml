@@ -16,6 +16,8 @@
     <properties>
         <java.version>13</java.version>
 
+        <oauth2.version>2.2.2.RELEASE</oauth2.version>
+
         <modelmapper.version>2.3.5</modelmapper.version>
         <apache-commons.version>3.9</apache-commons.version>
         <commons-validator.version>1.6</commons-validator.version>
@@ -44,6 +46,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-security</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.security.oauth</groupId>
+            <artifactId>spring-security-oauth2</artifactId>
+            <version>${oauth2.version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework.boot</groupId>

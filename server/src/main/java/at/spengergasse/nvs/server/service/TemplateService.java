@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
+import javax.transaction.Transactional;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -35,6 +36,7 @@ import java.util.stream.Stream;
 
 @Slf4j
 @Service
+@Transactional
 @RequiredArgsConstructor
 public class TemplateService {
 
@@ -64,7 +66,7 @@ public class TemplateService {
         ReminderDto matchedReminder = matchTemplate(reminderDto);
 
         Optional<User> userOptional = userRepository.findById(username);
-        User user = userOptional.orElseThrow(RuntimeException::new);
+        User user = userOptional.orElseThrow(() -> new IllegalArgumentException("No user " + username + " found!"));
 
         return Reminder
                 .builder()
@@ -369,6 +371,14 @@ public class TemplateService {
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
+
+        // ONLY FOR TESTING PURPOSES! WILL BE REPLACED WITH PROPER AUTHENTICATION LATER
+        User user = User.builder()
+                .username("testuser123")
+                .password("thispasswordissuper")
+                .build();
+
+        userRepository.save(user);
     }
 
     /**
