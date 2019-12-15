@@ -14,3 +14,7 @@
 .reminder-send {
   margin-left: 0.5%;
 }
+
+.list-item-border {
+  border: solid 2px lightgrey;
+}

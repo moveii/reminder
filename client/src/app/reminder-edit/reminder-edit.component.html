@@ -1,6 +1,26 @@
-<mat-form-field>
-  <input matInput [min]="minDate" [max]="maxDate" [value]="selectedReminder.reminderDateTime" [matDatepicker]="picker"
-         placeholder="Erinnerungsdatum">
-  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-  <mat-datepicker #picker></mat-datepicker>
-</mat-form-field>
+<mat-card class="reminder-edit">
+  <mat-card-header>
+    <mat-card-title>{{selectedReminder.text}}</mat-card-title>
+    <mat-card-subtitle>{{(selectedReminder.reminderDateTime | date: 'dd. MMMM yyyy HH:mm')}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content class="form-group">
+    <mat-form-field>
+      <input matInput [min]="minDate" [max]="maxDate" [value]="selectedReminder.reminderDateTime"
+             [matDatepicker]="picker"
+             placeholder="Erinnerungsdatum">
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [value]="(selectedReminder.reminderDateTime | date: 'HH:mm')" placeholder="Erinnerungszeit">
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput [ngModel]="selectedReminder.text" placeholder="Erinnerungstext">
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button>Speichern</button>
+  </mat-card-actions>
+</mat-card>
