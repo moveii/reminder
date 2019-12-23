@@ -16,19 +16,27 @@ import {MatSortModule} from '@angular/material/sort';
 import {MatIconModule} from '@angular/material';
 import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {FlexModule} from '@angular/flex-layout';
+import {RouterModule} from '@angular/router';
 import {ReminderEditComponent} from './reminder-edit/reminder-edit.component';
 import {MatDatepickerModule} from '@angular/material/datepicker';
 import {MatNativeDateModule} from '@angular/material/core';
-import {MatMomentDateModule} from "@angular/material-moment-adapter";
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
+import {LoginComponent} from './login/login.component';
+import {RegistrationComponent} from './registration/registration.component';
+import {routes} from './app.routing';
+import {UserService} from './service/user.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     ReminderComponent,
-    ReminderEditComponent
+    ReminderEditComponent,
+    LoginComponent,
+    RegistrationComponent
   ],
   imports: [
     BrowserModule,
+    RouterModule.forRoot(routes),
     BrowserAnimationsModule,
     HttpClientModule,
     MatToolbarModule,
@@ -47,7 +55,7 @@ import {MatMomentDateModule} from "@angular/material-moment-adapter";
     MatMomentDateModule,
     MatDatepickerModule
   ],
-  providers: [],
+  providers: [UserService],
   bootstrap: [AppComponent]
 })
 export class AppModule {
