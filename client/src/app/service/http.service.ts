@@ -7,9 +7,7 @@ import {Reminder} from '../dto/reminder';
  * Contains all HTTP-Request and -Response logic
  */
 
-@Injectable({
-  providedIn: 'root'
-})
+@Injectable()
 export class HttpService {
 
   private baseUrl = '/reminders/';

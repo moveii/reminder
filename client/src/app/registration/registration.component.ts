@@ -2,6 +2,8 @@ import {Component, OnInit} from '@angular/core';
 import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserService} from '../service/user.service';
+import {Token} from '../dto/token';
+import {User} from '../dto/user';
 
 @Component({
   selector: 'app-registration',
@@ -13,10 +15,10 @@ export class RegistrationComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private router: Router, private userService: UserService) {
   }
 
-  addForm: FormGroup;
+  form: FormGroup;
 
   ngOnInit() {
-    this.addForm = this.formBuilder.group({
+    this.form = this.formBuilder.group({
       username: ['', Validators.required],
       password: ['', Validators.required]
     });
@@ -24,9 +26,13 @@ export class RegistrationComponent implements OnInit {
   }
 
   onSubmit() {
-    this.userService.registerUser(this.addForm.value)
-      .subscribe(data => {
-        console.log(data);
-      });
+    this.userService.register(this.form.value).subscribe((user: User) => {
+      if (user.username === this.form.value.username) {
+        this.userService.login(this.form.value).subscribe((token: Token) => {
+          window.localStorage.setItem('token', token.token);
+          this.router.navigate(['reminder']);
+        });
+      }
+    });
   }
 }

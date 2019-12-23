@@ -1,30 +1,35 @@
 import {BrowserModule} from '@angular/platform-browser';
 import {NgModule} from '@angular/core';
-
 import {AppComponent} from './app.component';
 import {ReminderComponent} from './reminder/reminder.component';
-import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
-import {MatToolbarModule} from '@angular/material/toolbar';
-import {MatFormFieldModule} from '@angular/material/form-field';
-import {MatInputModule} from '@angular/material/input';
-import {MatCardModule} from '@angular/material/card';
-import {MatButtonModule} from '@angular/material/button';
-import {HttpClientModule} from '@angular/common/http';
-import {MatListModule} from '@angular/material/list';
-import {MatTableModule} from '@angular/material/table';
-import {MatSortModule} from '@angular/material/sort';
-import {MatIconModule} from '@angular/material';
-import {FormsModule, ReactiveFormsModule} from '@angular/forms';
-import {FlexModule} from '@angular/flex-layout';
-import {RouterModule} from '@angular/router';
 import {ReminderEditComponent} from './reminder-edit/reminder-edit.component';
-import {MatDatepickerModule} from '@angular/material/datepicker';
-import {MatNativeDateModule} from '@angular/material/core';
-import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {LoginComponent} from './login/login.component';
 import {RegistrationComponent} from './registration/registration.component';
+import {RouterModule} from '@angular/router';
 import {routes} from './app.routing';
+import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
+import {
+  MatButtonModule,
+  MatCardModule,
+  MatDatepickerModule,
+  MatFormFieldModule,
+  MatIconModule,
+  MatInputModule,
+  MatListModule,
+  MatNativeDateModule,
+  MatSortModule,
+  MatTableModule,
+  MatToolbarModule
+} from '@angular/material';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
+import {FlexModule} from '@angular/flex-layout';
+import {MatMomentDateModule} from '@angular/material-moment-adapter';
 import {UserService} from './service/user.service';
+import {HttpService} from './service/http.service';
+import {TokenInterceptor} from './interceptor';
+import {AuthGuard} from './authguard';
+
 
 @NgModule({
   declarations: [
@@ -55,7 +60,14 @@ import {UserService} from './service/user.service';
     MatMomentDateModule,
     MatDatepickerModule
   ],
-  providers: [UserService],
+  providers: [
+    UserService,
+    HttpService, {
+      provide: HTTP_INTERCEPTORS,
+      useClass: TokenInterceptor,
+      multi: true
+    },
+    AuthGuard],
   bootstrap: [AppComponent]
 })
 export class AppModule {

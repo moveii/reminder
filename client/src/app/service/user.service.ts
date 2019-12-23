@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
 import {Observable} from 'rxjs';
-import {User} from '../model/user';
-import {Token} from '../model/token';
+import {User} from '../dto/user';
+import {Token} from '../dto/token';
 
 @Injectable()
 export class UserService {
@@ -12,12 +12,12 @@ export class UserService {
 
   baseUrl = 'http://localhost:8080/users/';
 
-  login(loginPayload): Observable<Token> {
-    return this.http.post<Token>('http://localhost:8080/login', loginPayload);
+  login(user: User): Observable<Token> {
+    return this.http.post<Token>('/authentication/login', user);
   }
 
-  registerUser(user: User): Observable<User> {
-    return this.http.post<User>(this.baseUrl, user);
+  register(user: User): Observable<User> {
+    return this.http.post<User>('/authentication/register', user);
   }
 
   updateUser(user: User): Observable<User> {

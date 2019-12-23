@@ -8,6 +8,10 @@ export class TokenInterceptor implements HttpInterceptor {
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
     const token = window.localStorage.getItem('token');
 
+    console.log('Okay');
+    console.log(token);
+
+
     if (token) {
       request = request.clone({
         setHeaders: {

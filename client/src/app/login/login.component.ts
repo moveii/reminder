@@ -11,30 +11,57 @@ import {UserService} from '../service/user.service';
 export class LoginComponent implements OnInit {
 
   loginForm: FormGroup;
-  invalidLogin = false;
+  hide = true;
 
   constructor(private formBuilder: FormBuilder, private router: Router, private userService: UserService) {
   }
 
-  onSubmit() {
+  onSave() {
     if (this.loginForm.invalid) {
       return;
     }
-    const loginPayload = {
+
+    const user = {
       username: this.loginForm.controls.username.value,
       password: this.loginForm.controls.password.value
     };
-    this.userService.login(loginPayload).subscribe(data => {
+
+    this.userService.login(user).subscribe(data => {
       window.localStorage.setItem('token', data.token);
+      this.router.navigate(['reminder']);
     });
   }
 
   ngOnInit() {
     window.localStorage.removeItem('token');
     this.loginForm = this.formBuilder.group({
-      username: ['', Validators.compose([Validators.required])],
-      password: ['', Validators.required]
+      username: [null, [Validators.required, Validators.minLength(6)]],
+      password: [null, [Validators.required, Validators.minLength(12)]]
     });
   }
 
+  getErrorMessageUsername(): string {
+    const username = this.loginForm.controls.username;
+
+    if (username.hasError('required')) {
+      return 'Ein Nutzername muss angegeben werden';
+    }
+
+    if (username.hasError('minlength')) {
+      return 'Der Nutzername muss mindestens sechs Zeichen lang sein.';
+    }
+  }
+
+  getErrorMessagePassword(): string {
+    const password = this.loginForm.controls.password;
+
+    if (password.hasError('required')) {
+      return 'Ein Passwort muss angegeben werden';
+
+    }
+
+    if (password.hasError('minlength')) {
+      return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
+    }
+  }
 }
