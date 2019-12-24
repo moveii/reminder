@@ -3,6 +3,10 @@ import {FormBuilder, FormGroup, Validators} from '@angular/forms';
 import {Router} from '@angular/router';
 import {UserService} from '../service/user.service';
 
+/**
+ * Contains all logic for the login component.
+ */
+
 @Component({
   selector: 'app-login',
   templateUrl: './login.component.html',
@@ -16,6 +20,9 @@ export class LoginComponent implements OnInit {
   constructor(private formBuilder: FormBuilder, private router: Router, private userService: UserService) {
   }
 
+  /**
+   * Sends the entered username and password to the server for login. The token will be set and the user will be navigated to the reminders.
+   */
   onSave() {
     if (this.loginForm.invalid) {
       return;
@@ -40,6 +47,10 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * Returns the error message for the username input form.
+   * @returns the error message for the username input form
+   */
   getErrorMessageUsername(): string {
     const username = this.loginForm.controls.username;
 
@@ -52,12 +63,15 @@ export class LoginComponent implements OnInit {
     }
   }
 
+  /**
+   * Returns the error message for the password input form.
+   * @returns the error message for the password input form
+   */
   getErrorMessagePassword(): string {
     const password = this.loginForm.controls.password;
 
     if (password.hasError('required')) {
       return 'Ein Passwort muss angegeben werden';
-
     }
 
     if (password.hasError('minlength')) {

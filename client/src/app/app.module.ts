@@ -10,6 +10,7 @@ import {routes} from './app.routing';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
 import {
+  _MatMenuDirectivesModule,
   MatButtonModule,
   MatCardModule,
   MatDatepickerModule,
@@ -17,6 +18,7 @@ import {
   MatIconModule,
   MatInputModule,
   MatListModule,
+  MatMenuModule,
   MatNativeDateModule,
   MatSortModule,
   MatTableModule,
@@ -29,6 +31,7 @@ import {UserService} from './service/user.service';
 import {HttpService} from './service/http.service';
 import {TokenInterceptor} from './interceptor';
 import {AuthGuard} from './authguard';
+import {ReminderGuard} from './reminderguard';
 
 
 @NgModule({
@@ -58,7 +61,9 @@ import {AuthGuard} from './authguard';
     ReactiveFormsModule,
     MatNativeDateModule,
     MatMomentDateModule,
-    MatDatepickerModule
+    MatDatepickerModule,
+    _MatMenuDirectivesModule,
+    MatMenuModule
   ],
   providers: [
     UserService,
@@ -67,7 +72,9 @@ import {AuthGuard} from './authguard';
       useClass: TokenInterceptor,
       multi: true
     },
-    AuthGuard],
+    AuthGuard,
+    ReminderGuard
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule {

@@ -4,7 +4,7 @@ import {Observable} from 'rxjs';
 import {Reminder} from '../dto/reminder';
 
 /**
- * Contains all HTTP-Request and -Response logic
+ * Contains all HTTP-Request and -Response logic for Reminders
  */
 
 @Injectable()

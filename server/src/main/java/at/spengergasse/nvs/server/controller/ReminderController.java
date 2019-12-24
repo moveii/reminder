@@ -1,26 +1,28 @@
 package at.spengergasse.nvs.server.controller;
 
+import at.spengergasse.nvs.server.config.JwtTokenUtil;
 import at.spengergasse.nvs.server.dto.ReminderDto;
-import at.spengergasse.nvs.server.model.User;
+import at.spengergasse.nvs.server.model.AuthToken;
 import at.spengergasse.nvs.server.service.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * This class provides all methods necessary for the REST-API.
+ * This class provides all methods necessary for the REST-API for the Reminders.
  */
 
-@CrossOrigin("http://localhost:4200")
 @RestController
 @RequestMapping(path = "reminders")
 @RequiredArgsConstructor
 public class ReminderController {
 
     private final ReminderService reminderService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     /**
      * Returns all reminders of the authenticated user when called via a HTTP-GET-REQUEST.
@@ -28,8 +30,8 @@ public class ReminderController {
      * @return all reminders of the authenticated user
      */
     @GetMapping(path = "all")
-    public List<ReminderDto> findAllReminders() {
-        return reminderService.findAllReminders("testuser123"); // will be replaced with proper authentication later
+    public List<ReminderDto> findAllReminders(HttpServletRequest request) {
+        return reminderService.findAllReminders(getUsernameFromRequest(request));
     }
 
     /**
@@ -38,8 +40,9 @@ public class ReminderController {
      * @return all reminders of the authenticated user whose date is in the future
      */
     @GetMapping
-    public List<ReminderDto> findAllRemindersByDateAndTime() {
-        return reminderService.findAllRemindersByDateAndTime("testuser123"); // will be replaced with proper authentication later
+    public List<ReminderDto> findAllRemindersByDateAndTime(HttpServletRequest request) {
+        AuthToken tokenFromRequest = jwtTokenUtil.getTokenFromRequest(request);
+        return reminderService.findAllRemindersByDateAndTime(tokenFromRequest.getUsername());
     }
 
     /**
@@ -50,12 +53,8 @@ public class ReminderController {
      * @see SseEmitter
      */
     @GetMapping(path = "/register")
-    public SseEmitter register() {
-        User user = User.builder() // only for testing purposes
-                .username("testuser123")
-                .password("thispasswordissuper")
-                .build();
-        return reminderService.registerClient(user.getUsername());
+    public SseEmitter register(HttpServletRequest request) {
+        return reminderService.registerClient(getUsernameFromRequest(request));
     }
 
     /**
@@ -66,8 +65,9 @@ public class ReminderController {
      * @return the analysed, translated and persisted reminderDto
      */
     @PostMapping
-    public ResponseEntity<ReminderDto> createReminder(@RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.createReminder(reminderDto, "testuser123")); // will be replaced with proper authentication later
+    public ResponseEntity<ReminderDto> createReminder(HttpServletRequest request,
+                                                      @RequestBody ReminderDto reminderDto) {
+        return ResponseEntity.of(reminderService.createReminder(reminderDto, getUsernameFromRequest(request)));
     }
 
     /**
@@ -91,4 +91,14 @@ public class ReminderController {
         reminderService.deleteReminder(identifier);
     }
 
+    /**
+     * Extracts the token from the request, maps it to a user and returns the username.
+     *
+     * @param httpServletRequest the request
+     * @return the username linked to the token in the request
+     */
+    private String getUsernameFromRequest(HttpServletRequest httpServletRequest) {
+        AuthToken tokenFromRequest = jwtTokenUtil.getTokenFromRequest(httpServletRequest);
+        return tokenFromRequest.getUsername();
+    }
 }

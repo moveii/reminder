@@ -4,7 +4,6 @@ import at.spengergasse.nvs.server.dto.UserDto;
 import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.BeanUtils;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,11 +33,7 @@ public class UserService implements UserDetailsService {
         return userRepository.findById(username);
     }
 
-    public List<User> findAll() {
-        return userRepository.findAll();
-    }
-
-    public UserDto save(UserDto userDto) {
+    public UserDto createUser(UserDto userDto) {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(bcryptEncoder.encode(userDto.getPassword()));
@@ -48,17 +43,6 @@ public class UserService implements UserDetailsService {
                 .builder()
                 .username(save.getUsername())
                 .build();
-
-    }
-
-    public UserDto update(UserDto userDto) {
-        Optional<User> userOptional = findByUsername(userDto.getUsername());
-        if (userOptional.isPresent()) {
-            User user = userOptional.get();
-            BeanUtils.copyProperties(userDto, user, "password");
-            userRepository.save(user);
-        }
-        return userDto;
     }
 
     public void delete(String username) {

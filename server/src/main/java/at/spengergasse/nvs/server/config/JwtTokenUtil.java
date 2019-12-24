@@ -1,23 +1,45 @@
 package at.spengergasse.nvs.server.config;
 
 import at.spengergasse.nvs.server.dto.UserDto;
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
+import at.spengergasse.nvs.server.model.AuthToken;
+import io.jsonwebtoken.*;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.function.Function;
 
-import static at.spengergasse.nvs.server.model.Constants.ACCESS_TOKEN_VALIDITY_SECONDS;
-import static at.spengergasse.nvs.server.model.Constants.SIGNING_KEY;
+import static at.spengergasse.nvs.server.model.Constants.*;
 
+@Slf4j
 @Component
 public class JwtTokenUtil implements Serializable {
+
+    public AuthToken getTokenFromRequest(HttpServletRequest request) {
+        String header = request.getHeader(HEADER_STRING);
+        String username = null;
+        String authToken = null;
+
+        if (header != null && header.startsWith(TOKEN_PREFIX)) {
+            authToken = header.replace(TOKEN_PREFIX, "");
+            try {
+                username = getUsernameFromToken(authToken);
+            } catch (IllegalArgumentException e) {
+                log.error("An error occurred during getting username from token");
+            } catch (ExpiredJwtException e) {
+                log.warn("The token is expired and not valid anymore");
+            } catch (SignatureException e) {
+                log.error("Authentication Failed. Username or Password not valid.");
+            }
+        }
+
+        return new AuthToken(authToken, username);
+    }
 
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);

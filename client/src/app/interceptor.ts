@@ -1,16 +1,21 @@
 import {Injectable} from '@angular/core';
 import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
+import {catchError} from 'rxjs/operators';
+import {Router} from '@angular/router';
+
+/**
+ * Intercepts HTTP-Requests to add the token to the header for authentication.
+ */
 
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
+  constructor(public router: Router) {
+  }
+
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
     const token = window.localStorage.getItem('token');
-
-    console.log('Okay');
-    console.log(token);
-
 
     if (token) {
       request = request.clone({
@@ -20,6 +25,15 @@ export class TokenInterceptor implements HttpInterceptor {
       });
     }
 
-    return next.handle(request);
+    return next.handle(request).pipe(
+      catchError(err => {
+          if (err.status === 401) {
+            window.localStorage.removeItem('token');
+            this.router.navigateByUrl('login');
+          }
+          throw err;
+        }
+      )
+    );
   }
 }

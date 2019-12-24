@@ -2,21 +2,20 @@ import {Injectable} from '@angular/core';
 import {ActivatedRouteSnapshot, CanActivate, Router, RouterStateSnapshot} from '@angular/router';
 
 /**
- * Redirects the user to '/login' if not authenticated.
+ * Redirects the user to '/reminder' if already authenticated.
  */
 
 @Injectable()
-export class AuthGuard implements CanActivate {
+export class ReminderGuard implements CanActivate {
 
   constructor(private router: Router) {
   }
 
   canActivate(route: ActivatedRouteSnapshot, state: RouterStateSnapshot) {
     if (localStorage.getItem('token')) {
-      return true;
+      this.router.navigate(['/reminder']);
     } else {
-      this.router.navigate(['/login']);
-      return false;
+      return true;
     }
   }
 }

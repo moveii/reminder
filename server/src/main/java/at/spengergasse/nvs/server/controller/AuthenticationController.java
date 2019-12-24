@@ -12,10 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import java.util.Optional;
@@ -43,7 +40,13 @@ public class AuthenticationController {
         if (userOptional.isPresent()) {
             return ResponseEntity.status(HttpStatus.CONFLICT).build();
         } else {
-            return ResponseEntity.ok(userService.save(user));
+            return ResponseEntity.ok(userService.createUser(user));
         }
+    }
+
+    @DeleteMapping("/user/{username}")
+    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
+        userService.delete(username);
+        return ResponseEntity.ok().build();
     }
 }

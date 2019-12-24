@@ -2,9 +2,3 @@
   display: flex;
   flex-direction: column;
 }
-
-.login-card {
-  display: flex;
-  justify-content: center;
-  width: 100%;
-}
