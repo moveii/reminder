@@ -3,19 +3,25 @@
   <mat-card-content>
     <div [formGroup]="loginForm" class="login-form">
       <mat-form-field>
-        <input matInput #username_input formControlName="username" placeholder="Nutzername">
+        <input matInput #username_input formControlName="username" placeholder="Nutzername" (keydown)="inputChanged()">
         <mat-hint align="end">{{username_input.value?.length || 0}}/30</mat-hint>
         <mat-error *ngIf="loginForm.controls.username.invalid">{{getErrorMessageUsername()}}</mat-error>
+        <mat-error *ngIf="loginForm.controls.username.hasError('unauthorized')">
+          Die eingegebenen Nutzerdaten sind falsch.
+        </mat-error>
       </mat-form-field>
       <mat-form-field>
         <input matInput #password_input formControlName="password" placeholder="Passwort"
-               [type]="hide ? 'password' : 'text'">
+               [type]="hide ? 'password' : 'text'" (keydown)="inputChanged()">
         <button mat-icon-button matSuffix (click)="hide = !hide" [attr.aria-label]="'Hide password'"
                 [attr.aria-pressed]="hide">
           <mat-icon>{{hide ? 'visibility_off' : 'visibility'}}</mat-icon>
         </button>
         <mat-hint align="end">{{password_input.value?.length || 0}}/30</mat-hint>
         <mat-error *ngIf="loginForm.controls.password.invalid">{{getErrorMessagePassword()}}</mat-error>
+        <mat-error *ngIf="loginForm.controls.password.hasError('unauthorized')">
+          Die eingegebenen Nutzerdaten sind falsch.
+        </mat-error>
       </mat-form-field>
     </div>
   </mat-card-content>

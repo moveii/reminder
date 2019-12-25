@@ -36,6 +36,11 @@ export class LoginComponent implements OnInit {
     this.userService.login(user).subscribe(data => {
       window.localStorage.setItem('token', data.token);
       this.router.navigate(['reminder']);
+    }, error => {
+      if (error.status === 401) {
+        this.loginForm.controls.username.setErrors({unauthorized: true});
+        this.loginForm.controls.password.setErrors({unauthorized: true});
+      }
     });
   }
 
@@ -77,5 +82,19 @@ export class LoginComponent implements OnInit {
     if (password.hasError('minlength')) {
       return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
     }
+  }
+
+  /**
+   * When username or password is changed, both errors will be removed.
+   */
+  inputChanged() {
+    if (this.loginForm.controls.username.hasError('unauthorized') || this.loginForm.controls.password.hasError('unauthorized')) {
+      this.loginForm.controls.username.setErrors(null);
+      this.loginForm.controls.password.setErrors(null);
+    }
+    console.log(this.loginForm.controls.username.errors);
+    console.log(this.loginForm.controls.password.errors);
+    console.log(this.loginForm.controls.username.invalid);
+    console.log(this.loginForm.controls.password.invalid);
   }
 }
