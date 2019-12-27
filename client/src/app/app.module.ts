@@ -20,6 +20,7 @@ import {
   MatListModule,
   MatMenuModule,
   MatNativeDateModule,
+  MatSlideToggleModule,
   MatSortModule,
   MatTableModule,
   MatToolbarModule
@@ -64,7 +65,8 @@ import {PushNotificationService} from './service/push-notification.service';
     MatMomentDateModule,
     MatDatepickerModule,
     _MatMenuDirectivesModule,
-    MatMenuModule
+    MatMenuModule,
+    MatSlideToggleModule
   ],
   providers: [
     UserService,

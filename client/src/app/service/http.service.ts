@@ -16,11 +16,19 @@ export class HttpService {
   }
 
   /**
-   * Sends a HTTP-GET-Request to the server to get all reminders.
+   * Sends a HTTP-GET-Request to the server to get all reminders after the current date and time.
    * @returns the observable wrapping all reminders fetched from the server to subscribe
    */
   public findAllRemindersByDateAndTime(): Observable<Reminder[]> {
     return this.httpClient.get<Reminder[]>(this.baseUrl);
+  }
+
+  /**
+   * Sends a HTTP-GET-Request to the server to get all reminders.
+   * @returns the observable wrapping all reminders fetched from the server to subscribe
+   */
+  public findAllReminders(): Observable<Reminder[]> {
+    return this.httpClient.get<Reminder[]>(this.baseUrl + 'all');
   }
 
   /**

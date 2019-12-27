@@ -2,7 +2,7 @@
   width: 100%;
 }
 
-.reminder-save {
+.reminder-inline {
   display: flex;
   align-items: center;
 }
@@ -11,8 +11,12 @@
   background-color: lightgrey;
 }
 
-.reminder-send {
+.reminder-save {
   margin-left: 0.5%;
+}
+
+.reminder-all {
+  margin-left: 1%;
 }
 
 .list-item-border {

@@ -22,6 +22,7 @@ export class ReminderComponent implements OnInit {
   filterInput: string;
   filteredData: Reminder[] = [];
   inputForm: FormControl = new FormControl('');
+  showAll = false;
 
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private data: Reminder[] = [];
@@ -33,16 +34,7 @@ export class ReminderComponent implements OnInit {
    * Fetches data and starts [[clockInterval]] on startup.
    */
   ngOnInit() {
-    this.httpService.findAllRemindersByDateAndTime().subscribe((value: Reminder[]) => {
-      for (const reminder of value) {
-        const fetchedReminder = new Reminder(reminder.text);
-        fetchedReminder.identifier = reminder.identifier;
-        fetchedReminder.reminderDateTime = new Date(reminder.reminderDateTime);
-        this.data.push(fetchedReminder);
-      }
-      this.applyFilter();
-    });
-
+    this.fetchReminders();
     this.clockInterval();
   }
 
@@ -86,6 +78,7 @@ export class ReminderComponent implements OnInit {
       const fetchedReminder = new Reminder(value.text);
       fetchedReminder.identifier = value.identifier;
       fetchedReminder.reminderDateTime = new Date(value.reminderDateTime);
+
       this.data.push(fetchedReminder);
       this.applyFilter();
     }, error => {
@@ -106,8 +99,42 @@ export class ReminderComponent implements OnInit {
     this.httpService.deleteReminder(reminder).subscribe(() => {
       const index = this.data.indexOf(reminder);
       this.data.splice(index, 1);
+
       this.selectedReminder = undefined;
+
       this.applyFilter();
     });
+  }
+
+  /**
+   * Fetches the data according to [[showAll]]. If it's false, all reminders after the current date and time will be returned. Otherwise,
+   * all reminders will be returned.
+   */
+  fetchReminders() {
+    this.data = [];
+    this.selectedReminder = undefined;
+    if (this.showAll) {
+      this.httpService.findAllReminders().subscribe((value: Reminder[]) => {
+        for (const reminder of value) {
+          const fetchedReminder = new Reminder(reminder.text);
+          fetchedReminder.identifier = reminder.identifier;
+          fetchedReminder.reminderDateTime = new Date(reminder.reminderDateTime);
+
+          this.data.push(fetchedReminder);
+        }
+        this.applyFilter();
+      });
+    } else {
+      this.httpService.findAllRemindersByDateAndTime().subscribe((value: Reminder[]) => {
+        for (const reminder of value) {
+          const fetchedReminder = new Reminder(reminder.text);
+          fetchedReminder.identifier = reminder.identifier;
+          fetchedReminder.reminderDateTime = new Date(reminder.reminderDateTime);
+
+          this.data.push(fetchedReminder);
+        }
+        this.applyFilter();
+      });
+    }
   }
 }
