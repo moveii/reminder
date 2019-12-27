@@ -69,9 +69,10 @@ export class ReminderComponent implements OnInit {
    */
   applyFilter(): void {
     if (!this.filterInput || this.filterInput.length === 0) {
-      this.filteredData = this.data;
+      this.filteredData = this.data.sort((a, b) => a.reminderDateTime.getTime() - b.reminderDateTime.getTime());
     } else {
-      this.filteredData = this.data.filter(reminder => reminder.text.toLowerCase().indexOf(this.filterInput.trim().toLowerCase()) !== -1);
+      this.filteredData = this.data.filter(reminder => reminder.text.toLowerCase().indexOf(this.filterInput.trim().toLowerCase()) !== -1)
+        .sort((a, b) => a.reminderDateTime.getTime() - b.reminderDateTime.getTime());
     }
   }
 
