@@ -32,7 +32,12 @@ export class ReminderComponent implements OnInit {
    */
   ngOnInit() {
     this.httpService.findAllRemindersByDateAndTime().subscribe((value: Reminder[]) => {
-      this.data = value;
+      for (const reminder of value) {
+        const fetchedReminder = new Reminder(reminder.text);
+        fetchedReminder.identifier = reminder.identifier;
+        fetchedReminder.reminderDateTime = new Date(reminder.reminderDateTime);
+        this.data.push(fetchedReminder);
+      }
       this.applyFilter();
     });
 
@@ -66,7 +71,10 @@ export class ReminderComponent implements OnInit {
   sendReminder(reminderText: string): void {
     const reminder = new Reminder(reminderText);
     this.httpService.createReminder(reminder).subscribe(value => {
-      this.data.push(value);
+      const fetchedReminder = new Reminder(value.text);
+      fetchedReminder.identifier = value.identifier;
+      fetchedReminder.reminderDateTime = new Date(value.reminderDateTime);
+      this.data.push(fetchedReminder);
       this.applyFilter();
     }, error => {
       if (error.status === 500) {

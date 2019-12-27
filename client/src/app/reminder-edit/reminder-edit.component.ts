@@ -2,6 +2,7 @@ import {Component, Input, OnInit} from '@angular/core';
 import {Reminder} from '../dto/reminder';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
+import {HttpService} from '../service/http.service';
 
 export const MY_FORMATS = {
   parse: {
@@ -18,7 +19,6 @@ export const MY_FORMATS = {
 /**
  * Contains the logic for displaying all editing forms.
  */
-
 
 @Component({
   selector: 'app-reminder-edit',
@@ -40,9 +40,33 @@ export class ReminderEditComponent implements OnInit {
   maxDate: Date = new Date(this.minDate.getFullYear() + 10, this.minDate.getMonth(), this.minDate.getDay());
   @Input() selectedReminder: Reminder;
 
-  constructor() {
+  constructor(public httpService: HttpService) {
   }
 
   ngOnInit() {
+  }
+
+  /**
+   * Saves the modified reminder.
+   *
+   * @param identifier the identifier of the reminder
+   * @param date the date of the reminder
+   * @param time the time of the reminder
+   * @param text the text of the reminder
+   */
+  save(identifier, date, time, text) {
+    const reminder = new Reminder(text);
+    reminder.identifier = identifier;
+
+    date = new Date(date);
+    date.setUTCDate(date.getDate());
+    date.setUTCHours(time.split(':')[0]);
+    date.setUTCMinutes(time.split(':')[1]);
+    reminder.reminderDateTime = date.toISOString();
+
+    this.httpService.modifyReminder(reminder).subscribe(value => {
+      this.selectedReminder.text = value.text;
+      this.selectedReminder.reminderDateTime = new Date(value.reminderDateTime);
+    });
   }
 }

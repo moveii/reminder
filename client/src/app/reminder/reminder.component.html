@@ -8,7 +8,9 @@
             <span matPrefix>Erinnere mich&nbsp;</span>
             <mat-hint align="end">{{input.value.length}} / 64</mat-hint>
             <mat-error *ngIf="inputForm.hasError('template')">
-              Dieses Format entspricht keiner Vorlage! Ueberprüfen Sie Ihre Eingabe auf grammatikalische Richtigkeit.
+              Dieses Format entspricht keiner Vorlage! Ueberprüfen Sie Ihre Eingabe auf grammatikalische Richtigkeit
+              oder
+              ändern Sie das Fromat Ihrer Eingabe.
             </mat-error>
           </mat-form-field>
 
@@ -28,11 +30,9 @@
         <mat-list>
           <mat-list-item *ngFor="let reminder of filteredData; let i = index" (mouseover)="reminder.selected = true"
                          (mouseleave)="reminder.selected = false" [class.list-selection]="reminder.selected"
-                         (click)="editReminder(reminder); selectedReminder = reminder"
-                         [class.list-item-border]="selectedReminder === reminder">
-            <mat-icon matListIcon>alarm</mat-icon>
-            <mat-icon matListIcon *ngIf="(reminder.reminderDateTime | date: 'yyyy-MM-dd HH:mm') <= date">alarm_off
-            </mat-icon>
+                         (click)="selectedReminder = reminder" [class.list-item-border]="selectedReminder === reminder">
+            <mat-icon matListIcon *ngIf="reminder.reminderDateTime > date">alarm</mat-icon>
+            <mat-icon matListIcon *ngIf="reminder.reminderDateTime <= date">alarm_off</mat-icon>
             <h4 matLine><strong>{{reminder.text}}</strong></h4>
             <p matLine>
               <span>{{reminder.reminderDateTime | date:'dd. MMMM yyyy HH:mm'}}</span>

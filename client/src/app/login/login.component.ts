@@ -92,9 +92,5 @@ export class LoginComponent implements OnInit {
       this.loginForm.controls.username.setErrors(null);
       this.loginForm.controls.password.setErrors(null);
     }
-    console.log(this.loginForm.controls.username.errors);
-    console.log(this.loginForm.controls.password.errors);
-    console.log(this.loginForm.controls.username.invalid);
-    console.log(this.loginForm.controls.password.invalid);
   }
 }
