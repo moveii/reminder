@@ -20,6 +20,20 @@
         <mat-hint align="end">{{password_input.value?.length || 0}}/30</mat-hint>
         <mat-error *ngIf="registerForm.controls.password.invalid">{{getErrorMessagePassword()}}</mat-error>
       </mat-form-field>
+      <mat-form-field>
+        <input matInput #password_confirmation_input formControlName="passwordConfirmation"
+               placeholder="Passwort bestätigen"
+               [type]="hideConfirmation ? 'password' : 'text'">
+        <button mat-icon-button matSuffix (click)="hideConfirmation = !hideConfirmation"
+                [attr.aria-label]="'Hide password'"
+                [attr.aria-pressed]="hideConfirmation">
+          <mat-icon>{{hideConfirmation ? 'visibility_off' : 'visibility'}}</mat-icon>
+        </button>
+        <mat-hint align="end">{{password_confirmation_input.value?.length || 0}}/30</mat-hint>
+        <mat-error *ngIf="registerForm.controls.passwordConfirmation.invalid">
+          {{getErrorMessageConfirmationPassword()}}
+        </mat-error>
+      </mat-form-field>
     </div>
   </mat-card-content>
   <mat-card-actions>

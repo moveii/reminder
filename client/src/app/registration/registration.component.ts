@@ -17,12 +17,29 @@ export class RegistrationComponent implements OnInit {
 
   registerForm: FormGroup;
   hide = true;
+  hideConfirmation = true;
+
+  private static checkPasswords(formGroup: FormGroup) {
+    const password = formGroup.controls.password.value;
+    const passwordConfirmation = formGroup.controls.passwordConfirmation.value;
+
+    if (password !== passwordConfirmation) {
+      formGroup.controls.passwordConfirmation.setErrors({notSame: true});
+    } else {
+      formGroup.controls.passwordConfirmation.setErrors(null);
+    }
+
+    return null;
+  }
 
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: [null, [Validators.required, Validators.minLength(6)]],
-      password: [null, [Validators.required, Validators.minLength(12)]]
+      password: [null, [Validators.required, Validators.minLength(12)]],
+      passwordConfirmation: [null, [Validators.required, Validators.minLength(12)]]
     });
+
+    this.registerForm.setValidators(RegistrationComponent.checkPasswords);
   }
 
   /**
@@ -73,6 +90,26 @@ export class RegistrationComponent implements OnInit {
 
     if (password.hasError('minlength')) {
       return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
+    }
+  }
+
+  /**
+   * Returns the error message for the confirmation password input form.
+   * @returns the error message for the confirmation password input form
+   */
+  getErrorMessageConfirmationPassword(): string {
+    const password = this.registerForm.controls.passwordConfirmation;
+
+    if (password.hasError('required')) {
+      return 'Ein Passwort muss angegeben werden';
+    }
+
+    if (password.hasError('minlength')) {
+      return 'Das Passwort muss mindestens 12 Zeichen lang sein.';
+    }
+
+    if (password.hasError('notSame')) {
+      return 'Die Passwörter stimmen nicht überein.';
     }
   }
 }
