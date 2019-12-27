@@ -355,10 +355,26 @@ public class TemplateService {
             if (date == null && time != null) {
                 date = LocalDate.now();
             } else if (date != null) {
-                time = defaultTime(date);
+                if (date.equals(LocalDate.now()) && unit == null && duration == null) {
+                    LocalDateTime now = LocalDateTime.now();
+                    time = now.toLocalTime()
+                            .plusHours(1)
+                            .minusMinutes(now.getMinute())
+                            .minusSeconds(now.getSecond())
+                            .minusNanos(now.getNano());
+                } else {
+                    LocalDateTime now = LocalDateTime.now();
+                    time = now.toLocalTime()
+                            .minusSeconds(now.getSecond())
+                            .minusNanos(now.getNano());
+                }
             } else {
                 date = LocalDate.now();
-                time = defaultTime(date);
+
+                LocalDateTime now = LocalDateTime.now();
+                time = now.toLocalTime()
+                        .minusSeconds(now.getSecond())
+                        .minusNanos(now.getNano());
             }
         }
 
@@ -384,24 +400,6 @@ public class TemplateService {
             default:
                 throw new RuntimeException(unit + " is not a valid unit!");
         }
-    }
-
-    /**
-     * This method returns the default time. If it's before 12 a.m., 12 a.m. will be returned. Otherwise, the current
-     * time plus one hour without minutes will be returned.
-     *
-     * @return 12 a.m., if it's before 12 a.m.. Otherwise, the current time plus one hour without minutes, seconds and nanos
-     */
-    private LocalTime defaultTime(LocalDate date) {
-        LocalDateTime time = date.atTime(12, 0);
-        LocalDateTime now = LocalDateTime.now();
-
-        return time.isBefore(now) ? now
-                .toLocalTime()
-                .plusHours(1)
-                .minusMinutes(now.getMinute())
-                .minusSeconds(now.getSecond())
-                .minusNanos(now.getNano()) : time.toLocalTime();
     }
 
     /**
