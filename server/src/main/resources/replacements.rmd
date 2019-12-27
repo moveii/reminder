@@ -1,7 +1,12 @@
 abgeben=abzugeben
+einkaufen=einzukaufen
 
 machen=zu machen
 erledigen=zu erledigen
 bezahlen=zu bezahlen
+gehen=zu gehen
+essen=zu essen
+putzen=zu putzen
+schneiden=zu schneiden
 
 Netzwerktechnik=nvs

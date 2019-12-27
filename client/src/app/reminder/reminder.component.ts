@@ -81,6 +81,7 @@ export class ReminderComponent implements OnInit {
 
       this.data.push(fetchedReminder);
       this.applyFilter();
+      this.inputForm.setValue('');
     }, error => {
       if (error.status === 500) {
         this.inputForm.setErrors({template: true});
