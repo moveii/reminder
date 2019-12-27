@@ -1,3 +1,7 @@
 abgeben=abzugeben
 
+machen=zu machen
+erledigen=zu erledigen
+bezahlen=zu bezahlen
+
 Netzwerktechnik=nvs

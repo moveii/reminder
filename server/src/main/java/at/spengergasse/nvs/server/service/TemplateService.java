@@ -105,6 +105,19 @@ public class TemplateService {
 
             if (!match) {
                 continue;
+            } else {
+                String firstWord = unmatchedText.split(" ")[0];
+                String firstReplace = template.getReplace().length > 0 ? template.getReplace()[0].trim() : "";
+
+                if (template.isFirstReplaced()) {
+                    if (!firstReplace.equals(firstWord)) {
+                        continue;
+                    }
+                } else {
+                    if (firstReplace.equals(firstWord)) {
+                        continue;
+                    }
+                }
             }
 
             String replacedText = StringUtils.replaceEach(unmatchedText, template.getReplace(), template.emptyArray());
@@ -149,7 +162,7 @@ public class TemplateService {
                         log.warn(matcher + " is not registered!");
                 }
             }
-            if ((unit != null || duration != null || date != null || time != null) & text != null) {
+            if (unit != null || duration != null || date != null || time != null || text != null) {
                 LocalDateTime localDateTime = calcDate(date, time, unit, duration, template.isAddition());
 
                 return ReminderDto
@@ -160,7 +173,10 @@ public class TemplateService {
             }
         }
 
-        throw new RuntimeException("Could not match reminder to any template!");
+        throw new
+
+                RuntimeException("Could not match reminder to any template!");
+
     }
 
     /**
@@ -255,6 +271,7 @@ public class TemplateService {
 
     /**
      * This method takes the index of the array where the text starts and appends all following content of the array.
+     * If a replacement for any of the word combinations is found, these words will be replaced.
      *
      * @param words an array of words entered by the user
      * @param start the index of the array where the text starts
@@ -272,7 +289,29 @@ public class TemplateService {
             }
         }
 
-        return stringBuilder.toString();
+        String text = stringBuilder.toString();
+        String[] splittedText = text.split(" ");
+
+        StringBuilder textBuilder = new StringBuilder();
+
+        for (int i = 0; i < splittedText.length; i++) {
+            String[] searchArray = Arrays.copyOfRange(splittedText, i, splittedText.length);
+            String searchText = String.join(" ", searchArray);
+            String replacedSearchText = find(searchText, false);
+
+            if (searchText.equals(replacedSearchText)) {
+                textBuilder
+                        .append(splittedText[i])
+                        .append(" ");
+            } else {
+                textBuilder
+                        .append(replacedSearchText)
+                        .append(" ");
+                break;
+            }
+        }
+
+        return textBuilder.toString();
     }
 
     /**
@@ -316,10 +355,10 @@ public class TemplateService {
             if (date == null && time != null) {
                 date = LocalDate.now();
             } else if (date != null) {
-                time = LocalTime.of(12, 0);
+                time = defaultTime(date);
             } else {
                 date = LocalDate.now();
-                time = LocalTime.of(12, 0);
+                time = defaultTime(date);
             }
         }
 
@@ -345,6 +384,24 @@ public class TemplateService {
             default:
                 throw new RuntimeException(unit + " is not a valid unit!");
         }
+    }
+
+    /**
+     * This method returns the default time. If it's before 12 a.m., 12 a.m. will be returned. Otherwise, the current
+     * time plus one hour without minutes will be returned.
+     *
+     * @return 12 a.m., if it's before 12 a.m.. Otherwise, the current time plus one hour without minutes, seconds and nanos
+     */
+    private LocalTime defaultTime(LocalDate date) {
+        LocalDateTime time = date.atTime(12, 0);
+        LocalDateTime now = LocalDateTime.now();
+
+        return time.isBefore(now) ? now
+                .toLocalTime()
+                .plusHours(1)
+                .minusMinutes(now.getMinute())
+                .minusSeconds(now.getSecond())
+                .minusNanos(now.getNano()) : time.toLocalTime();
     }
 
     /**
@@ -374,14 +431,6 @@ public class TemplateService {
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
-
-        // ONLY FOR TESTING PURPOSES! WILL BE REPLACED WITH PROPER AUTHENTICATION LATER
-        User user = User.builder()
-                .username("testuser123")
-                .password("thispasswordissuper")
-                .build();
-
-        userRepository.save(user);
     }
 
     /**

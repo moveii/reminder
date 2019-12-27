@@ -7,7 +7,6 @@ import at.spengergasse.nvs.server.service.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.List;
@@ -46,18 +45,6 @@ public class ReminderController {
     }
 
     /**
-     * Returns an server-side event stream linked to the authenticated user to refresh when a reminder is due when
-     * called via a HTTP-GET-REQUEST.
-     *
-     * @return the SseEmitter
-     * @see SseEmitter
-     */
-    @GetMapping(path = "/register")
-    public SseEmitter register(HttpServletRequest request) {
-        return reminderService.registerClient(getUsernameFromRequest(request));
-    }
-
-    /**
      * Returns the analysed, translated and persisted {@code ReminderDto} linked to the authenticated user when called
      * via a HTTP-POST-REQUEST.
      *
@@ -77,8 +64,9 @@ public class ReminderController {
      * @return the modified reminder
      */
     @PutMapping
-    public ResponseEntity<ReminderDto> modifyReminder(@RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.modifyReminder(reminderDto));
+    public ResponseEntity<ReminderDto> modifyReminder(HttpServletRequest request,
+                                                      @RequestBody ReminderDto reminderDto) {
+        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, getUsernameFromRequest(request)));
     }
 
     /**

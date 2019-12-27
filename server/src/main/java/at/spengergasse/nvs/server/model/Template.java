@@ -29,6 +29,11 @@ public class Template {
     private boolean addition;
 
     /**
+     * If this fields value is true, the first word of the template has to be replaced.
+     */
+    private boolean firstReplaced;
+
+    /**
      * The constructor converts the given text to a {@code Template}.
      *
      * @param text the text, which was entered by the user.
@@ -55,6 +60,7 @@ public class Template {
                 .map(string -> string.concat(" "))
                 .toArray(String[]::new);
 
+        firstReplaced = List.of(replace).contains(words[0] + " ");
         addition = splittedText[1].contains("+");
     }
 
