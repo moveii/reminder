@@ -19,7 +19,8 @@
             </button>
           </div>
         </div>
-        <app-reminder-edit *ngIf="selectedReminder" [selectedReminder]="selectedReminder"></app-reminder-edit>
+        <app-reminder-edit *ngIf="selectedReminder" [selectedReminder]="selectedReminder"
+                           [reminderComponent]="this"></app-reminder-edit>
       </div>
       <mat-divider vertical></mat-divider>
       <div fxFlex>

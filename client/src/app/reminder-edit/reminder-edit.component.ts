@@ -3,6 +3,7 @@ import {Reminder} from '../dto/reminder';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
 import {HttpService} from '../service/http.service';
+import {ReminderComponent} from '../reminder/reminder.component';
 
 export const MY_FORMATS = {
   parse: {
@@ -39,6 +40,7 @@ export class ReminderEditComponent implements OnInit {
   minDate: Date = new Date();
   maxDate: Date = new Date(this.minDate.getFullYear() + 10, this.minDate.getMonth(), this.minDate.getDay());
   @Input() selectedReminder: Reminder;
+  @Input() reminderComponent: ReminderComponent;
 
   constructor(public httpService: HttpService) {
   }
@@ -47,7 +49,7 @@ export class ReminderEditComponent implements OnInit {
   }
 
   /**
-   * Saves the modified reminder.
+   * Calls the HTTP-Service to modify the reminder. This function automatically refreshes the filter and the displayed data.
    *
    * @param identifier the identifier of the reminder
    * @param date the date of the reminder
@@ -67,6 +69,7 @@ export class ReminderEditComponent implements OnInit {
     this.httpService.modifyReminder(reminder).subscribe(value => {
       this.selectedReminder.text = value.text;
       this.selectedReminder.reminderDateTime = new Date(value.reminderDateTime);
+      this.reminderComponent.applyFilter();
     });
   }
 }

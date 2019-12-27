@@ -3,6 +3,8 @@ import {HttpService} from '../service/http.service';
 import {Reminder} from '../dto/reminder';
 import {MatSort} from '@angular/material/sort';
 import {FormControl} from '@angular/forms';
+import {PushNotificationService} from '../service/push-notification.service';
+import {formatDate} from '@angular/common';
 
 /**
  * Contains the logic for filtering, editing, deleting and creating reminders.
@@ -24,7 +26,7 @@ export class ReminderComponent implements OnInit {
   @ViewChild(MatSort, {static: true}) sort: MatSort;
   private data: Reminder[] = [];
 
-  constructor(public httpService: HttpService) {
+  constructor(private httpService: HttpService, private pushNotificationService: PushNotificationService) {
   }
 
   /**
@@ -50,7 +52,16 @@ export class ReminderComponent implements OnInit {
   private clockInterval(): void {
     setInterval(() => {
       this.date = new Date();
-    }, 1000);
+
+      this.data.forEach(value => {
+        if (value.reminderDateTime.getTime() <= this.date.getTime() && value.reminderDateTime.getTime() + 1_000 > this.date.getTime()) {
+          this.pushNotificationService.generateNotification([{
+            title: value.text,
+            alertContent: formatDate(value.reminderDateTime, 'dd. MMMM yyyy HH:mm', 'en-US')
+          }]);
+        }
+      });
+    }, 1_000);
   }
 
   /**
@@ -97,14 +108,5 @@ export class ReminderComponent implements OnInit {
       this.selectedReminder = undefined;
       this.applyFilter();
     });
-  }
-
-  /**
-   * Calls the HTTP-Service to modify the reminder. This function automatically refreshes the filter
-   * and the [[ReminderEditComponent]]
-   * @param reminder the reminder to be modified
-   */
-  editReminder(reminder: Reminder): void {
-
   }
 }

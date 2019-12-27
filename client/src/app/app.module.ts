@@ -32,6 +32,7 @@ import {HttpService} from './service/http.service';
 import {TokenInterceptor} from './interceptor';
 import {AuthGuard} from './authguard';
 import {ReminderGuard} from './reminderguard';
+import {PushNotificationService} from './service/push-notification.service';
 
 
 @NgModule({
@@ -67,7 +68,9 @@ import {ReminderGuard} from './reminderguard';
   ],
   providers: [
     UserService,
-    HttpService, {
+    HttpService,
+    PushNotificationService,
+    {
       provide: HTTP_INTERCEPTORS,
       useClass: TokenInterceptor,
       multi: true
