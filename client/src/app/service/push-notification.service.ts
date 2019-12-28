@@ -40,7 +40,7 @@ export class PushNotificationService {
   generateNotification(data: any): void {
     const options = {
       body: data.alertContent,
-      icon: '../../favicon.ico'
+      icon: 'favicon.ico'
     };
     this.create(data.title, options).subscribe();
   }

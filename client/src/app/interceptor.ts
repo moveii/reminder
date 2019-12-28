@@ -28,7 +28,7 @@ export class TokenInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(err => {
-          if (request.method !== 'PUT' && request.url !== '/authentication/user') {
+          if (request.url !== '/authentication/user' && request.url !== '/authentication/login') {
             if (err.status === 401) {
               this.userService.removeUsername();
               window.localStorage.removeItem('token');
