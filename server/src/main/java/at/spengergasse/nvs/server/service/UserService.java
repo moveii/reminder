@@ -91,15 +91,6 @@ public class UserService implements UserDetailsService {
     }
 
     /**
-     * Deletes the user by it's name.
-     *
-     * @param username the username of the user to be deleted
-     */
-    public void delete(String username) {
-        userRepository.deleteById(username);
-    }
-
-    /**
      * Returns the authorities. Currently there is only one role, because role based authentication is not needed.
      *
      * @return a list of roles

@@ -19,6 +19,10 @@ export class RegistrationComponent implements OnInit {
   hide = true;
   hideConfirmation = true;
 
+  /**
+   * Checks if the new password and the confirmation password are equal.
+   * @param formGroup the formGroup to validate
+   */
   private static checkPasswords(formGroup: FormGroup) {
     const password = formGroup.controls.password.value;
     const passwordConfirmation = formGroup.controls.passwordConfirmation.value;
@@ -32,6 +36,9 @@ export class RegistrationComponent implements OnInit {
     return null;
   }
 
+  /**
+   * Initializes the formGroup for input validation.
+   */
   ngOnInit() {
     this.registerForm = this.formBuilder.group({
       username: [null, [Validators.required, Validators.minLength(6)]],

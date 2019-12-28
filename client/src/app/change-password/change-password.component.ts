@@ -6,6 +6,10 @@ import {UpdateUser} from '../dto/update-user';
 import {MatSnackBar} from '@angular/material';
 import {Observable} from 'rxjs';
 
+/**
+ * Contains all the logic necessary for changing one's password.
+ */
+
 @Component({
   selector: 'app-change-password',
   templateUrl: './change-password.component.html',
@@ -23,6 +27,11 @@ export class ChangePasswordComponent implements OnInit {
   newHide = true;
   newHideConfirmation = true;
 
+  /**
+   * Checks if the old and new password do not match. Additionally, this method checks if the new password and the confirmation password are
+   * equal.
+   * @param formGroup the formGroup to validate
+   */
   private static checkPasswords(formGroup: FormGroup) {
     const oldPassword = formGroup.controls.oldPassword.value;
     const newPassword = formGroup.controls.newPassword.value;
@@ -43,6 +52,9 @@ export class ChangePasswordComponent implements OnInit {
     return null;
   }
 
+  /**
+   * Sets the username and initializes the formGroup for input validation.
+   */
   ngOnInit() {
     this.username = this.userService.getUsernameAsObservable();
 
@@ -55,6 +67,13 @@ export class ChangePasswordComponent implements OnInit {
     this.changePasswordForm.setValidators(ChangePasswordComponent.checkPasswords);
   }
 
+  /**
+   * Changes the password of the user. Requires the username, the old password and the new password.
+   *
+   * @param username the username of the user
+   * @param oldPassword the old password of the user
+   * @param newPassword the new password of the user
+   */
   changePassword(username, oldPassword, newPassword) {
     const user = new UpdateUser();
     user.username = username;

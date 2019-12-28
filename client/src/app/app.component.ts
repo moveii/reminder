@@ -4,6 +4,10 @@ import {PushNotificationService} from './service/push-notification.service';
 import {UserService} from './service/user.service';
 import {Observable} from 'rxjs';
 
+/**
+ * Contains all logic for the AppComponent.
+ */
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -16,6 +20,9 @@ export class AppComponent implements OnInit {
   constructor(private router: Router, private pushNotificationService: PushNotificationService, private userService: UserService) {
   }
 
+  /**
+   * Sets the username, fetches the current username and requests for notification permission.
+   */
   ngOnInit(): void {
     this.username = this.userService.getUsernameAsObservable();
 

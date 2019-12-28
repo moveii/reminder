@@ -9,16 +9,19 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.Serializable;
 import java.util.Collections;
 import java.util.Date;
 import java.util.function.Function;
 
 import static at.spengergasse.nvs.server.model.Constants.*;
 
+/**
+ * This class provides util methods for validating and handling JWTs.
+ */
+
 @Slf4j
 @Component
-public class JwtTokenUtil implements Serializable {
+public class JwtUtil {
 
     /**
      * Extracts the token from the request, gets the associated user and returns the username.
@@ -78,11 +81,28 @@ public class JwtTokenUtil implements Serializable {
         return getClaimFromToken(token, Claims::getExpiration);
     }
 
+    /**
+     * Returns the claim (determined by the function) from the given token.
+     *
+     * @param token          the token
+     * @param claimsResolver the function
+     * @param <T>            the type
+     * @return the claim from the token
+     */
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
     }
 
+    /**
+     * Validates the token. Needs {@code UserDetails} for this operation. Returns true if the token is valid, false
+     * otherwise.
+     *
+     * @param token       the token to be validated
+     * @param userDetails the currently used {@code UserDetails} object
+     * @return true if the token is valid, false otherwise.
+     * @see JwtUtil#isTokenExpired
+     */
     public Boolean validateToken(String token, UserDetails userDetails) {
         final String username = getUsernameFromToken(token);
         return (
@@ -90,6 +110,12 @@ public class JwtTokenUtil implements Serializable {
                         && !isTokenExpired(token));
     }
 
+    /**
+     * Returns all claims associated with the token.
+     *
+     * @param token the token
+     * @return all claims associated with the token
+     */
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parser()
                 .setSigningKey(SIGNING_KEY)
@@ -97,17 +123,36 @@ public class JwtTokenUtil implements Serializable {
                 .getBody();
     }
 
+    /**
+     * Returns true if the token is expired. False otherwise.
+     *
+     * @param token the token
+     * @return true if the token is expired. False otherwise
+     */
     private Boolean isTokenExpired(String token) {
         final Date expiration = getExpirationDateFromToken(token);
         return expiration.before(new Date());
     }
 
+    /**
+     * Generates a new token associated to the username in the {@code UserDto} object.
+     *
+     * @param userDto the {@code UserDto}
+     * @return the token associated to the username in the {@code UserDto} object
+     * @see JwtUtil#doGenerateToken
+     */
     public String generateToken(UserDto userDto) {
         return doGenerateToken(userDto.getUsername());
     }
 
-    private String doGenerateToken(String subject) {
-        Claims claims = Jwts.claims().setSubject(subject);
+    /**
+     * Generates a new token associated to the username.
+     *
+     * @param username the username to be associated with the token
+     * @return the token associated to the given username
+     */
+    private String doGenerateToken(String username) {
+        Claims claims = Jwts.claims().setSubject(username);
         claims.put("scopes", Collections.singletonList(new SimpleGrantedAuthority("ROLE_ADMIN")));
 
         return Jwts.builder()

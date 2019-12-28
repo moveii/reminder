@@ -1,6 +1,5 @@
 package at.spengergasse.nvs.server.model;
 
-import at.spengergasse.nvs.server.dto.ReminderDto;
 import lombok.*;
 
 import javax.persistence.Entity;
@@ -45,15 +44,4 @@ public class Reminder {
     @ManyToOne
     private User user;
 
-    /**
-     * Maps {@code ReminderDtos} to {@code Reminders} via custom mapping to transform text entered by the user to
-     * a date, time and text.
-     *
-     * @param reminderDto the object which has to be converted to a reminder via custom mapping
-     * @see ReminderDto
-     * @see Reminder
-     */
-    public Reminder(ReminderDto reminderDto) {
-        // TODO implement custom mapping
-    }
 }

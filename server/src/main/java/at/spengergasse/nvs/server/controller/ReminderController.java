@@ -1,6 +1,6 @@
 package at.spengergasse.nvs.server.controller;
 
-import at.spengergasse.nvs.server.config.JwtTokenUtil;
+import at.spengergasse.nvs.server.config.JwtUtil;
 import at.spengergasse.nvs.server.dto.ReminderDto;
 import at.spengergasse.nvs.server.model.AuthToken;
 import at.spengergasse.nvs.server.service.ReminderService;
@@ -21,7 +21,7 @@ import java.util.List;
 public class ReminderController {
 
     private final ReminderService reminderService;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtUtil jwtUtil;
 
     /**
      * Returns all reminders of the authenticated user when called via a HTTP-GET-REQUEST.
@@ -30,7 +30,7 @@ public class ReminderController {
      */
     @GetMapping(path = "all")
     public List<ReminderDto> findAllReminders(HttpServletRequest request) {
-        return reminderService.findAllReminders(jwtTokenUtil.getUsernameFromRequest(request));
+        return reminderService.findAllReminders(jwtUtil.getUsernameFromRequest(request));
     }
 
     /**
@@ -40,7 +40,7 @@ public class ReminderController {
      */
     @GetMapping
     public List<ReminderDto> findAllRemindersByDateAndTime(HttpServletRequest request) {
-        AuthToken tokenFromRequest = jwtTokenUtil.getTokenFromRequest(request);
+        AuthToken tokenFromRequest = jwtUtil.getTokenFromRequest(request);
         return reminderService.findAllRemindersByDateAndTime(tokenFromRequest.getUsername());
     }
 
@@ -54,7 +54,7 @@ public class ReminderController {
     @PostMapping
     public ResponseEntity<ReminderDto> createReminder(HttpServletRequest request,
                                                       @RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.createReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
+        return ResponseEntity.of(reminderService.createReminder(reminderDto, jwtUtil.getUsernameFromRequest(request)));
     }
 
     /**
@@ -66,7 +66,7 @@ public class ReminderController {
     @PutMapping
     public ResponseEntity<ReminderDto> modifyReminder(HttpServletRequest request,
                                                       @RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
+        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, jwtUtil.getUsernameFromRequest(request)));
     }
 
     /**

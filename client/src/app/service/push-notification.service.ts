@@ -1,19 +1,30 @@
 import {Injectable} from '@angular/core';
 import {Observable} from 'rxjs';
 
+/**
+ * Contains all logic for sending push notifications to the user.
+ */
+
 @Injectable()
 export class PushNotificationService {
+
+  public permission: Permission;
 
   constructor() {
     this.permission = PushNotificationService.isSupported() ? 'default' : 'denied';
   }
 
-  public permission: Permission;
-
+  /**
+   * Returns true if notifications are supported in this environment. False otherwise.
+   * @returns true if notifications are supported in this environment. False otherwise
+   */
   private static isSupported(): boolean {
     return 'Notification' in window;
   }
 
+  /**
+   * Requests permission from the user for sending push notifications.
+   */
   requestPermission(): void {
     if (PushNotificationService.isSupported()) {
       Notification.requestPermission(status =>
@@ -22,16 +33,23 @@ export class PushNotificationService {
     }
   }
 
-  generateNotification(source: Array<any>): void {
-    source.forEach((item) => {
-      const options = {
-        body: item.alertContent,
-        icon: '../../favicon.ico'
-      };
-      this.create(item.title, options).subscribe();
-    });
+  /**
+   * Generates a push notification from the given data.
+   * @param data the data containing the information
+   */
+  generateNotification(data: any): void {
+    const options = {
+      body: data.alertContent,
+      icon: '../../favicon.ico'
+    };
+    this.create(data.title, options).subscribe();
   }
 
+  /**
+   * Creates a new notification with the given title and options.
+   * @param title the title of the notification
+   * @param options the options of the notification
+   */
   private create(title: string, options ?: PushNotification): any {
     return new Observable(obs => {
       if (!PushNotificationService.isSupported()) {

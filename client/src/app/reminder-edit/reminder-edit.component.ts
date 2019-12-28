@@ -1,4 +1,4 @@
-import {Component, Input, OnInit} from '@angular/core';
+import {Component, Input} from '@angular/core';
 import {Reminder} from '../dto/reminder';
 import {DateAdapter, MAT_DATE_FORMATS, MAT_DATE_LOCALE} from '@angular/material/core';
 import {MAT_MOMENT_DATE_ADAPTER_OPTIONS, MomentDateAdapter} from '@angular/material-moment-adapter';
@@ -35,7 +35,7 @@ export const MY_FORMATS = {
     {provide: MAT_DATE_FORMATS, useValue: MY_FORMATS},
   ],
 })
-export class ReminderEditComponent implements OnInit {
+export class ReminderEditComponent {
 
   minDate: Date = new Date();
   maxDate: Date = new Date(this.minDate.getFullYear() + 10, this.minDate.getMonth(), this.minDate.getDay());
@@ -43,9 +43,6 @@ export class ReminderEditComponent implements OnInit {
   @Input() reminderComponent: ReminderComponent;
 
   constructor(public httpService: HttpService) {
-  }
-
-  ngOnInit() {
   }
 
   /**

@@ -45,6 +45,9 @@ export class LoginComponent implements OnInit {
     });
   }
 
+  /**
+   * Removes the token and initializes the formGroup for input validation.
+   */
   ngOnInit() {
     window.localStorage.removeItem('token');
     this.loginForm = this.formBuilder.group({

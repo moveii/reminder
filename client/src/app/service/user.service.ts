@@ -49,19 +49,26 @@ export class UserService {
     return this.http.get<User>('/authentication/user');
   }
 
+  /**
+   * Sets the username to the given username.
+   * @param username the new username
+   */
   setUsername(username: string) {
     this.usernameSubject.next(username);
   }
 
+  /**
+   * Sets the username to an empty string.
+   */
   removeUsername() {
     this.usernameSubject.next('');
   }
 
+  /**
+   * Returns the username as an observable so components can subscribe to it.
+   * @returns the username as an observable
+   */
   getUsernameAsObservable(): Observable<string> {
     return this.usernameSubject.asObservable();
-  }
-
-  getUsername(): string {
-    return this.usernameSubject.getValue();
   }
 }

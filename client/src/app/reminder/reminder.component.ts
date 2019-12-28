@@ -39,7 +39,7 @@ export class ReminderComponent implements OnInit {
   }
 
   /**
-   * Refreshes the date every minute to handle alarm icons.
+   * Refreshes the date every minute to handle alarm icons and checks if a reminder is due.
    */
   private clockInterval(): void {
     setInterval(() => {
@@ -47,10 +47,10 @@ export class ReminderComponent implements OnInit {
 
       this.data.forEach(value => {
         if (value.reminderDateTime.getTime() <= this.date.getTime() && value.reminderDateTime.getTime() + 1_000 > this.date.getTime()) {
-          this.pushNotificationService.generateNotification([{
+          this.pushNotificationService.generateNotification({
             title: value.text,
             alertContent: formatDate(value.reminderDateTime, 'dd. MMMM yyyy HH:mm', 'en-US')
-          }]);
+          });
         }
       });
     }, 1_000);

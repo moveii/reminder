@@ -16,14 +16,6 @@ import java.util.List;
 public interface ReminderRepository extends JpaRepository<Reminder, String> {
 
     /**
-     * With this method, reminders can be searched by date and time.
-     *
-     * @param reminderDateTime the date and time of the reminder
-     * @return a list of reminders with the given date and time
-     */
-    List<Reminder> findAllByReminderDateTime(LocalDateTime reminderDateTime);
-
-    /**
      * This method returns all reminders from a user.
      *
      * @param username the username of the user

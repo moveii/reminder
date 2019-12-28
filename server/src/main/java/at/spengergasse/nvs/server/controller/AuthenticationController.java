@@ -1,6 +1,6 @@
 package at.spengergasse.nvs.server.controller;
 
-import at.spengergasse.nvs.server.config.JwtTokenUtil;
+import at.spengergasse.nvs.server.config.JwtUtil;
 import at.spengergasse.nvs.server.dto.UpdateUserDto;
 import at.spengergasse.nvs.server.dto.UserDto;
 import at.spengergasse.nvs.server.model.AuthToken;
@@ -30,7 +30,7 @@ import java.util.Optional;
 public class AuthenticationController {
 
     private final AuthenticationManager authenticationManager;
-    private final JwtTokenUtil jwtTokenUtil;
+    private final JwtUtil jwtUtil;
     private final UserService userService;
 
     /**
@@ -44,7 +44,7 @@ public class AuthenticationController {
     @PostMapping(value = "/login")
     public ResponseEntity<AuthToken> login(@RequestBody @Valid UserDto user) throws AuthenticationException {
         authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(user.getUsername(), user.getPassword()));
-        final String token = jwtTokenUtil.generateToken(user);
+        final String token = jwtUtil.generateToken(user);
         return ResponseEntity.ok(new AuthToken(token, user.getUsername()));
     }
 
@@ -73,7 +73,7 @@ public class AuthenticationController {
      */
     @GetMapping("/user")
     public ResponseEntity<UserDto> deleteUser(HttpServletRequest requet) {
-        String username = jwtTokenUtil.getUsernameFromRequest(requet);
+        String username = jwtUtil.getUsernameFromRequest(requet);
         return ResponseEntity.ok(UserDto.builder().username(username).build());
     }
 
@@ -87,7 +87,7 @@ public class AuthenticationController {
     @PutMapping("/user")
     public ResponseEntity<UserDto> updateUserPassword(HttpServletRequest request,
                                                       @RequestBody @Valid UpdateUserDto updateUserDto) {
-        String username = jwtTokenUtil.getUsernameFromRequest(request);
+        String username = jwtUtil.getUsernameFromRequest(request);
         if (username.equals(updateUserDto.getUsername())) {
             Optional<UserDto> userDto = userService.updateUserPassword(updateUserDto);
             if (userDto.isPresent()) {
