@@ -1,13 +1,19 @@
 [DURATION] [UNIT] vor dem [DATE] um [TIME] [TEXT];-
 [DURATION] [UNIT] nach dem [DATE] um [TIME] [TEXT];+
 
-in [DURATION] [UNIT] um [TIME] [TEXT];+
-in [DURATION] [UNIT] [TEXT];+
+[DATE] in [DURATION] [UNIT] um [TIME] [TEXT];+
+[DATE] in [DURATION] [UNIT] [TEXT];+
 
 [DURATION] [UNIT] vor dem [DATE] [TEXT];-
 [DURATION] [UNIT] nach dem [DATE] [TEXT];+
 
+in [DURATION] [UNIT] um [TIME] [TEXT];+
+in [DURATION] [UNIT] [TEXT];+
+
 am [DATE] um [TIME] [TEXT];
 am [DATE] [TEXT];
 
+um [TIME] [TEXT];
+
+[DATE] um [TIME] [TEXT];
 [DATE] [TEXT];

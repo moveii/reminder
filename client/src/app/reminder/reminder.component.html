@@ -1,0 +1,56 @@
+<mat-card>
+  <mat-card-content>
+    <div fxLayoutGap="0.5%">
+      <div fxFlex="69.5%" fxFlex.md="59.5%" fxFlex.sm="49.75%">
+        <div class="reminder-inline">
+          <mat-form-field class="reminder-input"
+                          (keydown.enter)="input.value.trim().length > 0 ? sendReminder(input.value) : ''">
+            <input matInput #input [maxLength]="64" type="text" [formControl]="inputForm">
+            <span matPrefix>Erinnere mich&nbsp;</span>
+            <mat-hint align="end">{{input.value.length}} / 64</mat-hint>
+            <mat-error *ngIf="inputForm.hasError('template')">
+              Dieses Format entspricht keiner Vorlage! Ueberprüfen Sie Ihre Eingabe auf grammatikalische Richtigkeit
+              oder ändern Sie das Fromat Ihrer Eingabe.
+            </mat-error>
+          </mat-form-field>
+
+          <div class="reminder-inline">
+            <button mat-button [disabled]="input.value.trim().length === 0" (click)="sendReminder(input.value)">
+              Sichern
+            </button>
+          </div>
+        </div>
+        <app-reminder-edit *ngIf="selectedReminder" [selectedReminder]="selectedReminder"
+                           [reminderComponent]="this"></app-reminder-edit>
+      </div>
+      <mat-divider vertical></mat-divider>
+      <div fxFlex>
+        <div class="reminder-inline">
+          <mat-form-field class="reminder-input">
+            <input matInput [(ngModel)]="filterInput" (keyup)="applyFilter()" placeholder="Suche">
+          </mat-form-field>
+
+          <div class="reminder-all">
+            <mat-slide-toggle color="warn" [(ngModel)]="showAll" (change)="fetchReminders()"></mat-slide-toggle>
+          </div>
+        </div>
+
+        <mat-list>
+          <mat-list-item *ngFor="let reminder of filteredData; let i = index" (mouseover)="reminder.selected = true"
+                         (mouseleave)="reminder.selected = false" [class.list-selection]="reminder.selected"
+                         (click)="selectedReminder = reminder" [class.list-item-border]="selectedReminder === reminder">
+            <mat-icon matListIcon>{{reminder.reminderDateTime > date ? 'alarm' : 'alarm_off'}}</mat-icon>
+            <h4 matLine><strong>{{reminder.text}}</strong></h4>
+            <p matLine>
+              <span>{{reminder.reminderDateTime | date:'dd. MMMM yyyy HH:mm'}}</span>
+            </p>
+            <span class="fill"></span>
+            <button mat-icon-button color="warn" (click)="deleteReminder(reminder)">
+              <mat-icon>delete</mat-icon>
+            </button>
+          </mat-list-item>
+        </mat-list>
+      </div>
+    </div>
+  </mat-card-content>
+</mat-card>

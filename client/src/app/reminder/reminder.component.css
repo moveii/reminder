@@ -1,0 +1,24 @@
+.reminder-input {
+  width: 100%;
+}
+
+.reminder-inline {
+  display: flex;
+  align-items: center;
+}
+
+.list-selection {
+  background-color: lightgrey;
+}
+
+.reminder-save {
+  margin-left: 0.5%;
+}
+
+.reminder-all {
+  margin-left: 1%;
+}
+
+.list-item-border {
+  border: solid 2px lightgrey;
+}

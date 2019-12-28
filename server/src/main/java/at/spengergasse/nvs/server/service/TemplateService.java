@@ -7,6 +7,7 @@ import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -42,14 +42,14 @@ public class TemplateService {
 
     private final UserRepository userRepository;
 
-    @Value("templates.rmd")
-    private File templateFile;
+    @Value("classpath:templates.rmd")
+    private InputStream templateStream;
 
-    @Value("replacements.rmd")
-    private File replacementsFiles;
+    @Value("classpath:replacements.rmd")
+    private InputStream replacementsStream;
 
-    @Value("definitions.rmd")
-    private File definitionsFiles;
+    @Value("classpath:definitions.rmd")
+    private InputStream definitionsStream;
 
     private List<Template> templates;
     private Map<String, List<String>> replacements;
@@ -105,10 +105,26 @@ public class TemplateService {
 
             if (!match) {
                 continue;
+            } else {
+                String firstWord = unmatchedText.split(" ")[0];
+                String firstReplace = template.getReplace().length > 0 ? template.getReplace()[0].trim() : "";
+
+                if (template.isFirstReplaced()) {
+                    if (!firstReplace.equals(firstWord)) {
+                        continue;
+                    }
+                } else {
+                    if (firstReplace.equals(firstWord)) {
+                        continue;
+                    }
+                }
             }
 
             String replacedText = StringUtils.replaceEach(unmatchedText, template.getReplace(), template.emptyArray());
             String[] splittedText = replacedText.split(" ");
+            splittedText = Arrays.stream(splittedText)
+                    .filter(string -> !string.equalsIgnoreCase("uhr"))
+                    .toArray(String[]::new);
 
             List<String> matchers = template.getMatchers();
 
@@ -146,7 +162,7 @@ public class TemplateService {
                         log.warn(matcher + " is not registered!");
                 }
             }
-            if ((unit != null || duration != null || date != null || time != null) & text != null) {
+            if (unit != null || duration != null || date != null || time != null || text != null) {
                 LocalDateTime localDateTime = calcDate(date, time, unit, duration, template.isAddition());
 
                 return ReminderDto
@@ -157,7 +173,10 @@ public class TemplateService {
             }
         }
 
-        throw new RuntimeException("Could not match reminder to any template!");
+        throw new
+
+                RuntimeException("Could not match reminder to any template!");
+
     }
 
     /**
@@ -252,6 +271,7 @@ public class TemplateService {
 
     /**
      * This method takes the index of the array where the text starts and appends all following content of the array.
+     * If a replacement for any of the word combinations is found, these words will be replaced.
      *
      * @param words an array of words entered by the user
      * @param start the index of the array where the text starts
@@ -269,7 +289,29 @@ public class TemplateService {
             }
         }
 
-        return stringBuilder.toString();
+        String text = stringBuilder.toString();
+        String[] splittedText = text.split(" ");
+
+        StringBuilder textBuilder = new StringBuilder();
+
+        for (int i = 0; i < splittedText.length; i++) {
+            String[] searchArray = Arrays.copyOfRange(splittedText, i, splittedText.length);
+            String searchText = String.join(" ", searchArray);
+            String replacedSearchText = find(searchText, false);
+
+            if (searchText.equals(replacedSearchText)) {
+                textBuilder
+                        .append(splittedText[i])
+                        .append(" ");
+            } else {
+                textBuilder
+                        .append(replacedSearchText)
+                        .append(" ");
+                break;
+            }
+        }
+
+        return textBuilder.toString();
     }
 
     /**
@@ -313,10 +355,26 @@ public class TemplateService {
             if (date == null && time != null) {
                 date = LocalDate.now();
             } else if (date != null) {
-                time = LocalTime.of(12, 0);
+                if (date.equals(LocalDate.now()) && unit == null && duration == null) {
+                    LocalDateTime now = LocalDateTime.now();
+                    time = now.toLocalTime()
+                            .plusHours(1)
+                            .minusMinutes(now.getMinute())
+                            .minusSeconds(now.getSecond())
+                            .minusNanos(now.getNano());
+                } else {
+                    LocalDateTime now = LocalDateTime.now();
+                    time = now.toLocalTime()
+                            .minusSeconds(now.getSecond())
+                            .minusNanos(now.getNano());
+                }
             } else {
                 date = LocalDate.now();
-                time = LocalTime.of(12, 0);
+
+                LocalDateTime now = LocalDateTime.now();
+                time = now.toLocalTime()
+                        .minusSeconds(now.getSecond())
+                        .minusNanos(now.getNano());
             }
         }
 
@@ -351,34 +409,26 @@ public class TemplateService {
      */
     @PostConstruct
     private void init() throws IOException {
-        templates = Files
-                .readAllLines(Paths.get(templateFile.getPath()))
+        templates = IOUtils
+                .readLines(templateStream, Charset.defaultCharset())
                 .stream()
                 .filter(template -> !template.isEmpty())
                 .map(Template::new)
                 .collect(Collectors.toList());
 
-        replacements = Files
-                .readAllLines(Paths.get(replacementsFiles.getPath()))
+        replacements = IOUtils
+                .readLines(replacementsStream, Charset.defaultCharset())
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
 
-        definitions = Files
-                .readAllLines(Paths.get(definitionsFiles.getPath()))
+        definitions = IOUtils
+                .readLines(definitionsStream, Charset.defaultCharset())
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
-
-        // ONLY FOR TESTING PURPOSES! WILL BE REPLACED WITH PROPER AUTHENTICATION LATER
-        User user = User.builder()
-                .username("testuser123")
-                .password("thispasswordissuper")
-                .build();
-
-        userRepository.save(user);
     }
 
     /**

@@ -1,0 +1,27 @@
+<mat-card class="reminder-edit">
+  <mat-card-header>
+    <mat-card-title>{{selectedReminder.text}}</mat-card-title>
+    <mat-card-subtitle>{{(selectedReminder.reminderDateTime | date: 'dd. MMMM yyyy HH:mm')}}</mat-card-subtitle>
+  </mat-card-header>
+  <mat-card-content class="form-group">
+    <mat-form-field (click)="picker.open()">
+      <input matInput [min]="minDate" [max]="maxDate" [value]="selectedReminder.reminderDateTime"
+             [matDatepicker]="picker" readonly placeholder="Erinnerungsdatum" #date>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker disabled="false"></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput type="time" [value]="(selectedReminder.reminderDateTime | date: 'HH:mm')"
+             placeholder="Erinnerungszeit" #time>
+    </mat-form-field>
+
+    <mat-form-field>
+      <input matInput type="text" [value]="selectedReminder.text" placeholder="Erinnerungstext" #text>
+    </mat-form-field>
+  </mat-card-content>
+  <mat-card-actions>
+    <button mat-button (click)="save(selectedReminder.identifier, date.value, time.value, text.value)">Speichern
+    </button>
+  </mat-card-actions>
+</mat-card>

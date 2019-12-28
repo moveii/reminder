@@ -1,63 +1,47 @@
 package at.spengergasse.nvs.server.controller;
 
+import at.spengergasse.nvs.server.config.JwtTokenUtil;
 import at.spengergasse.nvs.server.dto.ReminderDto;
-import at.spengergasse.nvs.server.model.User;
+import at.spengergasse.nvs.server.model.AuthToken;
 import at.spengergasse.nvs.server.service.ReminderService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
-import java.time.LocalDateTime;
+import javax.servlet.http.HttpServletRequest;
 import java.util.List;
 
 /**
- * This class provides all methods necessary for the REST-API.
+ * This class provides all methods necessary for the REST-API for the Reminders.
  */
 
-@CrossOrigin("http://localhost:4200")
 @RestController
-@RequestMapping(path = "reminder")
+@RequestMapping(path = "reminders")
 @RequiredArgsConstructor
 public class ReminderController {
 
     private final ReminderService reminderService;
+    private final JwtTokenUtil jwtTokenUtil;
 
     /**
      * Returns all reminders of the authenticated user when called via a HTTP-GET-REQUEST.
      *
      * @return all reminders of the authenticated user
      */
+    @GetMapping(path = "all")
+    public List<ReminderDto> findAllReminders(HttpServletRequest request) {
+        return reminderService.findAllReminders(jwtTokenUtil.getUsernameFromRequest(request));
+    }
+
+    /**
+     * Returns all reminders of the authenticated user whose date is in the future when called via a HTTP-GET-REQUEST.
+     *
+     * @return all reminders of the authenticated user whose date is in the future
+     */
     @GetMapping
-    public List<ReminderDto> findAllReminders() {
-        return reminderService.findAllReminders("testuser123"); // will be replaced with proper authentication later
-    }
-
-    /**
-     * Returns all reminders after the given date and time of the authenticated user when called via a HTTP-GET-REQUEST.
-     *
-     * @param dateTime the minimum date and time of the reminders
-     * @return all reminders of the authenticated user after the given date and time
-     */
-    @GetMapping(path = "{dateTime}")
-    public List<ReminderDto> findAllRemindersByDateAndTime(@PathVariable LocalDateTime dateTime) {
-        return reminderService.findAllRemindersByDateAndTime(dateTime, "testuser123"); // will be replaced with proper authentication later
-    }
-
-    /**
-     * Returns an server-side event stream linked to the authenticated user to refresh when a reminder is due when
-     * called via a HTTP-GET-REQUEST.
-     *
-     * @return the SseEmitter
-     * @see SseEmitter
-     */
-    @GetMapping(path = "/register")
-    public SseEmitter register() {
-        User user = User.builder() // only for testing purposes
-                .username("testuser123")
-                .password("thispasswordissuper")
-                .build();
-        return reminderService.registerClient(user.getUsername());
+    public List<ReminderDto> findAllRemindersByDateAndTime(HttpServletRequest request) {
+        AuthToken tokenFromRequest = jwtTokenUtil.getTokenFromRequest(request);
+        return reminderService.findAllRemindersByDateAndTime(tokenFromRequest.getUsername());
     }
 
     /**
@@ -68,8 +52,9 @@ public class ReminderController {
      * @return the analysed, translated and persisted reminderDto
      */
     @PostMapping
-    public ResponseEntity<ReminderDto> createReminder(@RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.createReminder(reminderDto, "testuser123")); // will be replaced with proper authentication later
+    public ResponseEntity<ReminderDto> createReminder(HttpServletRequest request,
+                                                      @RequestBody ReminderDto reminderDto) {
+        return ResponseEntity.of(reminderService.createReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
     }
 
     /**
@@ -79,8 +64,9 @@ public class ReminderController {
      * @return the modified reminder
      */
     @PutMapping
-    public ResponseEntity<ReminderDto> modifyReminder(@RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.modifyReminder(reminderDto));
+    public ResponseEntity<ReminderDto> modifyReminder(HttpServletRequest request,
+                                                      @RequestBody ReminderDto reminderDto) {
+        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
     }
 
     /**
@@ -92,5 +78,4 @@ public class ReminderController {
     public void deleteReminder(@PathVariable String identifier) {
         reminderService.deleteReminder(identifier);
     }
-
 }

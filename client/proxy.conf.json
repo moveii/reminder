@@ -1,0 +1,11 @@
+{
+  "/authentication": {
+    "target": "https://localhost:8080",
+    "secure": false
+  },
+  "/reminders": {
+    "target": "https://localhost:8080",
+    "secure": false
+  }
+}
+
