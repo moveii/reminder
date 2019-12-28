@@ -17,7 +17,7 @@ import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
 import java.io.IOException;
 import java.io.InputStream;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -410,21 +410,21 @@ public class TemplateService {
     @PostConstruct
     private void init() throws IOException {
         templates = IOUtils
-                .readLines(templateStream, Charset.defaultCharset())
+                .readLines(templateStream, StandardCharsets.UTF_8)
                 .stream()
                 .filter(template -> !template.isEmpty())
                 .map(Template::new)
                 .collect(Collectors.toList());
 
         replacements = IOUtils
-                .readLines(replacementsStream, Charset.defaultCharset())
+                .readLines(replacementsStream, StandardCharsets.UTF_8)
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
 
         definitions = IOUtils
-                .readLines(definitionsStream, Charset.defaultCharset())
+                .readLines(definitionsStream, StandardCharsets.UTF_8)
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
