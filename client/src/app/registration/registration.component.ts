@@ -25,7 +25,7 @@ export class RegistrationComponent implements OnInit {
 
     if (password !== passwordConfirmation) {
       formGroup.controls.passwordConfirmation.setErrors({notSame: true});
-    } else {
+    } else if (formGroup.controls.passwordConfirmation.hasError('notSame')) {
       formGroup.controls.passwordConfirmation.setErrors(null);
     }
 
@@ -50,6 +50,7 @@ export class RegistrationComponent implements OnInit {
     this.userService.register(this.registerForm.value).subscribe((user: User) => {
       if (user.username === this.registerForm.value.username) {
         this.userService.login(this.registerForm.value).subscribe((token: Token) => {
+          this.userService.setUsername(token.username);
           window.localStorage.setItem('token', token.token);
           this.router.navigate(['reminder']);
         });

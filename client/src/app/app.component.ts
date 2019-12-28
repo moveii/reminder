@@ -1,6 +1,7 @@
 import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {PushNotificationService} from './service/push-notification.service';
+import {UserService} from './service/user.service';
 
 @Component({
   selector: 'app-root',
@@ -9,11 +10,18 @@ import {PushNotificationService} from './service/push-notification.service';
 })
 export class AppComponent implements OnInit {
   title = 'reminder';
+  username = '';
 
-  constructor(private router: Router, private pushNotificationService: PushNotificationService) {
+  constructor(private router: Router, private pushNotificationService: PushNotificationService, private userService: UserService) {
   }
 
   ngOnInit(): void {
+    this.userService.getUsernameAsObservable().subscribe(username => {
+      this.username = username;
+    });
+    this.userService.username().subscribe(username => {
+      this.userService.setUsername(username.username);
+    });
     this.pushNotificationService.requestPermission();
   }
 
@@ -21,6 +29,7 @@ export class AppComponent implements OnInit {
    * Logs the user out by removing the token and navigating back to the login form.
    */
   logout() {
+    this.userService.removeUsername();
     window.localStorage.removeItem('token');
     this.router.navigateByUrl('login');
   }
@@ -30,5 +39,12 @@ export class AppComponent implements OnInit {
    */
   loggedin(): boolean {
     return window.localStorage.getItem('token') !== null;
+  }
+
+  /**
+   * Navigates to the [[ChangePasswordComponent]].
+   */
+  changePassword() {
+    this.router.navigateByUrl('user/edit');
   }
 }

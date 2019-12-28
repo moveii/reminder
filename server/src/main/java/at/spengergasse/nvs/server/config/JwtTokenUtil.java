@@ -20,6 +20,23 @@ import static at.spengergasse.nvs.server.model.Constants.*;
 @Component
 public class JwtTokenUtil implements Serializable {
 
+    /**
+     * Extracts the token from the request, gets the associated user and returns the username.
+     *
+     * @param httpServletRequest the request in which the token is contained
+     * @return the username linked to the token in the request
+     */
+    public String getUsernameFromRequest(HttpServletRequest httpServletRequest) {
+        AuthToken tokenFromRequest = getTokenFromRequest(httpServletRequest);
+        return tokenFromRequest.getUsername();
+    }
+
+    /**
+     * Extracts the token from the request, gets the associated user and returns an {@code AuthToken}.
+     *
+     * @param request the request in which the token is contained
+     * @return the {@code AuthToken} containing the username and token
+     */
     public AuthToken getTokenFromRequest(HttpServletRequest request) {
         String header = request.getHeader(HEADER_STRING);
         String username = null;
@@ -41,10 +58,22 @@ public class JwtTokenUtil implements Serializable {
         return new AuthToken(authToken, username);
     }
 
+    /**
+     * Returns the associated username to the token.
+     *
+     * @param token the token
+     * @return the username associated to the token
+     */
     public String getUsernameFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    /**
+     * Returns the expiration date of the token.
+     *
+     * @param token the token
+     * @return the expiration date of the token
+     */
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }
@@ -52,6 +81,13 @@ public class JwtTokenUtil implements Serializable {
     public <T> T getClaimFromToken(String token, Function<Claims, T> claimsResolver) {
         final Claims claims = getAllClaimsFromToken(token);
         return claimsResolver.apply(claims);
+    }
+
+    public Boolean validateToken(String token, UserDetails userDetails) {
+        final String username = getUsernameFromToken(token);
+        return (
+                username.equals(userDetails.getUsername())
+                        && !isTokenExpired(token));
     }
 
     private Claims getAllClaimsFromToken(String token) {
@@ -82,12 +118,4 @@ public class JwtTokenUtil implements Serializable {
                 .signWith(SignatureAlgorithm.HS384, SIGNING_KEY)
                 .compact();
     }
-
-    public Boolean validateToken(String token, UserDetails userDetails) {
-        final String username = getUsernameFromToken(token);
-        return (
-                username.equals(userDetails.getUsername())
-                        && !isTokenExpired(token));
-    }
-
 }

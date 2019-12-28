@@ -3,6 +3,7 @@ import {HttpHandler, HttpInterceptor, HttpRequest} from '@angular/common/http';
 import {Observable} from 'rxjs';
 import {catchError} from 'rxjs/operators';
 import {Router} from '@angular/router';
+import {UserService} from './service/user.service';
 
 /**
  * Intercepts HTTP-Requests to add the token to the header for authentication.
@@ -11,7 +12,7 @@ import {Router} from '@angular/router';
 @Injectable()
 export class TokenInterceptor implements HttpInterceptor {
 
-  constructor(public router: Router) {
+  constructor(public router: Router, private  userService: UserService) {
   }
 
   intercept(request: HttpRequest<any>, next: HttpHandler): Observable<any> {
@@ -27,9 +28,12 @@ export class TokenInterceptor implements HttpInterceptor {
 
     return next.handle(request).pipe(
       catchError(err => {
-          if (err.status === 401) {
-            window.localStorage.removeItem('token');
-            this.router.navigateByUrl('login');
+          if (request.method !== 'PUT' && request.url !== '/authentication/user') {
+            if (err.status === 401) {
+              this.userService.removeUsername();
+              window.localStorage.removeItem('token');
+              this.router.navigateByUrl('login');
+            }
           }
           throw err;
         }

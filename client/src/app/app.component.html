@@ -1,10 +1,15 @@
 <mat-toolbar color="primary">
   <span>Reminder</span>
   <span class="fill"></span>
+  <span>{{username}}</span>
   <button mat-icon-button [matMenuTriggerFor]="menu" [disabled]="!loggedin()">
     <mat-icon>account_circle</mat-icon>
   </button>
   <mat-menu #menu="matMenu">
+    <button mat-menu-item (click)="changePassword()">
+      <mat-icon>edit</mat-icon>
+      <span>Passwort ändern</span>
+    </button>
     <button mat-menu-item (click)="logout()">
       <mat-icon>exit_to_app</mat-icon>
       <span>Abmelden</span>

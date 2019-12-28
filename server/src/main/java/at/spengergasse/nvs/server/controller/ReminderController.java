@@ -30,7 +30,7 @@ public class ReminderController {
      */
     @GetMapping(path = "all")
     public List<ReminderDto> findAllReminders(HttpServletRequest request) {
-        return reminderService.findAllReminders(getUsernameFromRequest(request));
+        return reminderService.findAllReminders(jwtTokenUtil.getUsernameFromRequest(request));
     }
 
     /**
@@ -54,7 +54,7 @@ public class ReminderController {
     @PostMapping
     public ResponseEntity<ReminderDto> createReminder(HttpServletRequest request,
                                                       @RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.createReminder(reminderDto, getUsernameFromRequest(request)));
+        return ResponseEntity.of(reminderService.createReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
     }
 
     /**
@@ -66,7 +66,7 @@ public class ReminderController {
     @PutMapping
     public ResponseEntity<ReminderDto> modifyReminder(HttpServletRequest request,
                                                       @RequestBody ReminderDto reminderDto) {
-        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, getUsernameFromRequest(request)));
+        return ResponseEntity.of(reminderService.modifyReminder(reminderDto, jwtTokenUtil.getUsernameFromRequest(request)));
     }
 
     /**
@@ -77,16 +77,5 @@ public class ReminderController {
     @DeleteMapping(path = "{identifier}")
     public void deleteReminder(@PathVariable String identifier) {
         reminderService.deleteReminder(identifier);
-    }
-
-    /**
-     * Extracts the token from the request, maps it to a user and returns the username.
-     *
-     * @param httpServletRequest the request
-     * @return the username linked to the token in the request
-     */
-    private String getUsernameFromRequest(HttpServletRequest httpServletRequest) {
-        AuthToken tokenFromRequest = jwtTokenUtil.getTokenFromRequest(httpServletRequest);
-        return tokenFromRequest.getUsername();
     }
 }

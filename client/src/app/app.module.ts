@@ -21,6 +21,7 @@ import {
   MatMenuModule,
   MatNativeDateModule,
   MatSlideToggleModule,
+  MatSnackBarModule,
   MatSortModule,
   MatTableModule,
   MatToolbarModule
@@ -34,6 +35,7 @@ import {TokenInterceptor} from './interceptor';
 import {AuthGuard} from './authguard';
 import {ReminderGuard} from './reminderguard';
 import {PushNotificationService} from './service/push-notification.service';
+import {ChangePasswordComponent} from './change-password/change-password.component';
 
 
 @NgModule({
@@ -42,7 +44,8 @@ import {PushNotificationService} from './service/push-notification.service';
     ReminderComponent,
     ReminderEditComponent,
     LoginComponent,
-    RegistrationComponent
+    RegistrationComponent,
+    ChangePasswordComponent
   ],
   imports: [
     BrowserModule,
@@ -66,7 +69,8 @@ import {PushNotificationService} from './service/push-notification.service';
     MatDatepickerModule,
     _MatMenuDirectivesModule,
     MatMenuModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSnackBarModule
   ],
   providers: [
     UserService,

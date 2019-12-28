@@ -1,6 +1,7 @@
 package at.spengergasse.nvs.server.controller;
 
 import at.spengergasse.nvs.server.config.JwtTokenUtil;
+import at.spengergasse.nvs.server.dto.UpdateUserDto;
 import at.spengergasse.nvs.server.dto.UserDto;
 import at.spengergasse.nvs.server.model.AuthToken;
 import at.spengergasse.nvs.server.model.User;
@@ -14,6 +15,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.bind.annotation.*;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import java.util.Optional;
 
@@ -65,14 +67,35 @@ public class AuthenticationController {
     }
 
     /**
-     * Deletes the username by the given name.
+     * Returns the username associated to the token.
      *
-     * @param username the name of the user to be deleted
-     * @return a {@code ResponseEntity} with HTTP-Status 200 if user is deleted
+     * @return the {@code UserDto} containing the username
      */
-    @DeleteMapping("/user/{username}")
-    public ResponseEntity<Void> deleteUser(@PathVariable String username) {
-        userService.delete(username);
-        return ResponseEntity.ok().build();
+    @GetMapping("/user")
+    public ResponseEntity<UserDto> deleteUser(HttpServletRequest requet) {
+        String username = jwtTokenUtil.getUsernameFromRequest(requet);
+        return ResponseEntity.ok(UserDto.builder().username(username).build());
+    }
+
+    /**
+     * Updates the password of the given user. The username associated with the token and the given username must match.
+     *
+     * @param updateUserDto the data necessary to update the user's password
+     * @return the username wrapped in a {@code} UserDto or 'UNAUTHORIZED' when the usernames do not match or the
+     * username is not found.
+     */
+    @PutMapping("/user")
+    public ResponseEntity<UserDto> updateUserPassword(HttpServletRequest request,
+                                                      @RequestBody @Valid UpdateUserDto updateUserDto) {
+        String username = jwtTokenUtil.getUsernameFromRequest(request);
+        if (username.equals(updateUserDto.getUsername())) {
+            Optional<UserDto> userDto = userService.updateUserPassword(updateUserDto);
+            if (userDto.isPresent()) {
+                return ResponseEntity.of(userDto);
+            }
+        } else {
+            log.error("The given username {} and the username associated with the token ({}) do not match!", username, updateUserDto.getUsername());
+        }
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
 }

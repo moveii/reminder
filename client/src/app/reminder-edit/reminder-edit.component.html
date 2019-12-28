@@ -6,7 +6,7 @@
   <mat-card-content class="form-group">
     <mat-form-field (click)="picker.open()">
       <input matInput [min]="minDate" [max]="maxDate" [value]="selectedReminder.reminderDateTime"
-             [matDatepicker]="picker" disabled placeholder="Erinnerungsdatum" #date>
+             [matDatepicker]="picker" readonly placeholder="Erinnerungsdatum" #date>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker disabled="false"></mat-datepicker>
     </mat-form-field>

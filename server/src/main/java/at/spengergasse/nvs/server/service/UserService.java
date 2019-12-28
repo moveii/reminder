@@ -1,5 +1,6 @@
 package at.spengergasse.nvs.server.service;
 
+import at.spengergasse.nvs.server.dto.UpdateUserDto;
 import at.spengergasse.nvs.server.dto.UserDto;
 import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.UserRepository;
@@ -59,12 +60,34 @@ public class UserService implements UserDetailsService {
         User user = new User();
         user.setUsername(userDto.getUsername());
         user.setPassword(bcryptEncoder.encode(userDto.getPassword()));
-        User save = userRepository.save(user);
+        User savedUser = userRepository.save(user);
 
         return UserDto
                 .builder()
-                .username(save.getUsername())
+                .username(savedUser.getUsername())
                 .build();
+    }
+
+    /**
+     * Updates the user's password.
+     *
+     * @param updateUserDto the data necessary to update the user's password
+     * @return the new {@code User} object as an {@code UserDto} wrapped in an {@code Optional}.
+     */
+    public Optional<UserDto> updateUserPassword(UpdateUserDto updateUserDto) {
+        Optional<User> userOptional = findByUsername(updateUserDto.getUsername());
+        if (userOptional.isPresent()) {
+            User user = userOptional.get();
+
+            if (bcryptEncoder.matches(updateUserDto.getOldPassword(), user.getPassword())) {
+                user.setPassword(bcryptEncoder.encode(updateUserDto.getNewPassword()));
+                User savedUser = userRepository.save(user);
+
+                return Optional.of(UserDto.builder().username(savedUser.getUsername()).build());
+            }
+        }
+
+        return Optional.empty();
     }
 
     /**
