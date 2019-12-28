@@ -1,6 +1,6 @@
 import {Injectable} from '@angular/core';
 import {HttpClient} from '@angular/common/http';
-import {Observable, Subject} from 'rxjs';
+import {BehaviorSubject, Observable} from 'rxjs';
 import {User} from '../dto/user';
 import {Token} from '../dto/token';
 import {UpdateUser} from '../dto/update-user';
@@ -12,7 +12,7 @@ import {UpdateUser} from '../dto/update-user';
 @Injectable()
 export class UserService {
 
-  private usernameSubject = new Subject<string>();
+  private usernameSubject = new BehaviorSubject<string>('');
 
   constructor(private http: HttpClient) {
   }
@@ -54,10 +54,14 @@ export class UserService {
   }
 
   removeUsername() {
-    this.usernameSubject.next();
+    this.usernameSubject.next('');
   }
 
   getUsernameAsObservable(): Observable<string> {
     return this.usernameSubject.asObservable();
+  }
+
+  getUsername(): string {
+    return this.usernameSubject.getValue();
   }
 }

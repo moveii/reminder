@@ -4,6 +4,7 @@ import {Router} from '@angular/router';
 import {UserService} from '../service/user.service';
 import {UpdateUser} from '../dto/update-user';
 import {MatSnackBar} from '@angular/material';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-change-password',
@@ -11,12 +12,13 @@ import {MatSnackBar} from '@angular/material';
   styleUrls: ['./change-password.component.css']
 })
 export class ChangePasswordComponent implements OnInit {
-  username = '';
+  username = new Observable<string>();
 
   constructor(private formBuilder: FormBuilder, private router: Router, private userService: UserService, private snackBar: MatSnackBar) {
   }
 
   changePasswordForm: FormGroup;
+
   oldHide = true;
   newHide = true;
   newHideConfirmation = true;
@@ -42,9 +44,7 @@ export class ChangePasswordComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.userService.getUsernameAsObservable().subscribe(username => {
-      this.username = username;
-    });
+    this.username = this.userService.getUsernameAsObservable();
 
     this.changePasswordForm = this.formBuilder.group({
       oldPassword: [null, [Validators.required, Validators.minLength(12)]],
@@ -55,9 +55,9 @@ export class ChangePasswordComponent implements OnInit {
     this.changePasswordForm.setValidators(ChangePasswordComponent.checkPasswords);
   }
 
-  changePassword(oldPassword, newPassword) {
+  changePassword(username, oldPassword, newPassword) {
     const user = new UpdateUser();
-    user.username = this.username;
+    user.username = username;
     user.oldPassword = oldPassword;
     user.newPassword = newPassword;
 

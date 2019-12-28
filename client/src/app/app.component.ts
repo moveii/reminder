@@ -2,6 +2,7 @@ import {Component, OnInit} from '@angular/core';
 import {Router} from '@angular/router';
 import {PushNotificationService} from './service/push-notification.service';
 import {UserService} from './service/user.service';
+import {Observable} from 'rxjs';
 
 @Component({
   selector: 'app-root',
@@ -10,18 +11,18 @@ import {UserService} from './service/user.service';
 })
 export class AppComponent implements OnInit {
   title = 'reminder';
-  username = '';
+  username = new Observable<string>();
 
   constructor(private router: Router, private pushNotificationService: PushNotificationService, private userService: UserService) {
   }
 
   ngOnInit(): void {
-    this.userService.getUsernameAsObservable().subscribe(username => {
-      this.username = username;
-    });
+    this.username = this.userService.getUsernameAsObservable();
+
     this.userService.username().subscribe(username => {
       this.userService.setUsername(username.username);
     });
+
     this.pushNotificationService.requestPermission();
   }
 
