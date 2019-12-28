@@ -12,14 +12,16 @@
 
     <groupId>at.spengergasse.nvs</groupId>
     <artifactId>server</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0</version>
+    <packaging>jar</packaging>
 
     <properties>
         <java.version>13</java.version>
 
         <jwt.version>0.9.0</jwt.version>
         <modelmapper.version>2.3.5</modelmapper.version>
-        <apache-commons.version>3.9</apache-commons.version>
+        <apache-commons-lang.version>3.9</apache-commons-lang.version>
+        <apache-commons-io.version>2.6</apache-commons-io.version>
         <commons-validator.version>1.6</commons-validator.version>
     </properties>
 
@@ -60,7 +62,12 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
-            <version>${apache-commons.version}</version>
+            <version>${apache-commons-lang.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+            <version>${apache-commons-io.version}</version>
         </dependency>
         <dependency>
             <groupId>commons-validator</groupId>

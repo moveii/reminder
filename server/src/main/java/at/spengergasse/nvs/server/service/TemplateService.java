@@ -7,6 +7,7 @@ import at.spengergasse.nvs.server.model.User;
 import at.spengergasse.nvs.server.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.springframework.beans.factory.annotation.Value;
@@ -14,10 +15,9 @@ import org.springframework.stereotype.Service;
 
 import javax.annotation.PostConstruct;
 import javax.transaction.Transactional;
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
+import java.io.InputStream;
+import java.nio.charset.Charset;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -42,14 +42,14 @@ public class TemplateService {
 
     private final UserRepository userRepository;
 
-    @Value("templates.rmd")
-    private File templateFile;
+    @Value("classpath:templates.rmd")
+    private InputStream templateStream;
 
-    @Value("replacements.rmd")
-    private File replacementsFiles;
+    @Value("classpath:replacements.rmd")
+    private InputStream replacementsStream;
 
-    @Value("definitions.rmd")
-    private File definitionsFiles;
+    @Value("classpath:definitions.rmd")
+    private InputStream definitionsStream;
 
     private List<Template> templates;
     private Map<String, List<String>> replacements;
@@ -409,22 +409,22 @@ public class TemplateService {
      */
     @PostConstruct
     private void init() throws IOException {
-        templates = Files
-                .readAllLines(Paths.get(templateFile.getPath()))
+        templates = IOUtils
+                .readLines(templateStream, Charset.defaultCharset())
                 .stream()
                 .filter(template -> !template.isEmpty())
                 .map(Template::new)
                 .collect(Collectors.toList());
 
-        replacements = Files
-                .readAllLines(Paths.get(replacementsFiles.getPath()))
+        replacements = IOUtils
+                .readLines(replacementsStream, Charset.defaultCharset())
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
                 .collect(Collectors.toMap(this::definitionKey, this::definitionValues));
 
-        definitions = Files
-                .readAllLines(Paths.get(definitionsFiles.getPath()))
+        definitions = IOUtils
+                .readLines(definitionsStream, Charset.defaultCharset())
                 .stream()
                 .filter(definition -> !definition.isEmpty())
                 .map(definition -> definition.split("="))
