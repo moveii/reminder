@@ -12,16 +12,16 @@ When you're logged in, you can create a new reminder by writing normal sentences
 in the right upper corner. When clicking on the icon next to it, you can access the user menu. Here you can change your 
 password our simply log out. You will stay logged in for 24 hours. Afterwards, you need to enter your credentials again. 
 
-![Reminder Input](https://user-images.githubusercontent.com/51756146/71550202-f5ab5380-29ca-11ea-97b8-c2bf647488a0.PNG)
+![Reminder Input](https://user-images.githubusercontent.com/51756146/71550201-f47a2680-29ca-11ea-91b1-0a578e2192d0.PNG)
 
 You can save the entered text by pressing enter or by pressing the button next to the input field.
 
-![Reminder Saved](https://user-images.githubusercontent.com/51756146/71550201-f47a2680-29ca-11ea-91b1-0a578e2192d0.PNG)
+![Reminder Saved](https://user-images.githubusercontent.com/51756146/71550202-f5ab5380-29ca-11ea-97b8-c2bf647488a0.PNG)
 
 As you can see, the key elements of the inputted text have been understood by the application. Additionally, 'NVS' has been replaced with 'Netzwerktechnik' (as defined in [replacements.rmd](server/src/main/resources/replacements.rmd)). In this example, on December
 30, 2019 at 2:30 p.m. a notification will be sent to remind you.
 
-Here are same example inputs:
+Here are some example inputs:
 
 * eine Woche vor dem 31.12.2019 um 23 Uhr Mathe zu machen
 * eine Woche nach dem 31.12.2019 um 11 Uhr Mathe zu machen
