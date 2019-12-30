@@ -69,7 +69,7 @@ In [`definitons.rmd`](server/src/main/resources/definitions.rmd), you can specif
 * dat (day after tomorrow)
 
 ### Templates
-In [`templates.rmd`](server/src/main/resources/templates.rmd), you can spedify custom templates so the application understands your input. For instance, with `[DURATION] [UNIT] before the [DATE] at [TIME] [TEXT];-` you would be able enter something like `[Remind me] two days before the 31.12.2019 at 14:30 to go to the grocery store` ('two' and 'days' have to be specified in [`definitons.rmd`](server/src/main/resources/definitions.rmd)).
+In [`templates.rmd`](server/src/main/resources/templates.rmd), you can spedify custom templates so the application understands your input. For instance, with `[DURATION] [UNIT] before the [DATE] at [TIME] [TEXT];-` you would be able enter something like `[Remind me] two days before the 31.12.2019 at 14:30 to go to the grocery store` ('two' and 'days' have to be specified in [`definitons.rmd`](server/src/main/resources/definitions.rmd)). The `-` after the semicolon tells the application that `[DATE]` must be subtracted with `[UNIT]` and `[DURATION]`. A `+` (and every other symbol) indicates an addition. 
 
 * [DATE] can be a date (yyyy-MM-dd, dd-MM-yyyy, dd.MM.yyyy) or today, tomorrow or dat (day after tomorrow)
 * [TIME] can be a time (HH:mm oder HH)
