@@ -80,7 +80,7 @@ In [`templates.rmd`](server/src/main/resources/templates.rmd), you can spedify c
 Only modify [`templates.rmd`](server/src/main/resources/templates.rmd) at your own risk.
 
 ## Prerequisite
-Make sure you have at least [Maven 3](https://maven.apache.org/download.cgi) and at least [Node.js v10.15.3](https://nodejs.org/en/) installed.
+Make sure you have at least [Java 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html), at least [Maven 3](https://maven.apache.org/download.cgi) and at least [Node.js v10.15.3](https://nodejs.org/en/) installed.
 
 Next, you need to install `Angular CLI`.
 ```
@@ -95,5 +95,5 @@ keytool -genkeypair -alias reminder -keyalg RSA -keysize 2048 -storetype PKCS12 
 Copy the `reminder.p12` file in to `server/src/main/resources/keystore`. You have to create `keystore` manually.
 
 ## Deployment
-Now we need to build the project. You need to execute ```mvn clean install``` in the project root folder.
-Now the project is build. To start the application, navigate into the server directory and execute ```mvn spring-boot:run```. The application is running on `https://localhost:8080`. Have fun!
+Now we need to build the project. You need to execute `mvn clean install` in the project root folder.
+Now the project is build. Navigate into `server/target`. and find the `server.jar` (with a version number). If you execute this file, you start the application. The application is running on `https://localhost:8080`. Have fun!
