@@ -113,6 +113,6 @@ To build the project, you need to execute `mvn clean install` in the project **r
 Now the project is build. Navigate into `server/target` and find the `server.jar` (with a version number).
 
 ### Execute the project
-If you execute the `server.jar`, the application will start. You can simply execute it with `java -jar server.jar`. However, if you close the session, the application will stop. If you don't want this behaviour, use `nohup java -jar server.jar &` instead. With `nohup java -jar server.jar > log.txt &` you can change the log output to a custom file (default is `nohup.out`).
+If you execute the `server.jar`, the application will start on port `8080`. You can simply execute it with `java -jar server.jar`. However, if you close the session, the application will stop. If you don't want this behaviour, use `nohup java -jar server.jar &` instead. With `nohup java -jar server.jar > log.txt &` you can change the log output to a custom file (default is `nohup.out`).
 
 The local time of the server will be used for the creation of reminders. Make sure that you set the timezone correctly.
