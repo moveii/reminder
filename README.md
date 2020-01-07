@@ -53,7 +53,7 @@ for reminders (only by text) and the toggle next to it hides or shows already du
 Don't forget to always rebuild and redeploy the application after making changes to the files.
 
 ### Replacements
-In [`replacements.rmd`](server/src/main/resources/replacements.rmd), you can specify replacement words for other words. For instance, `Networking=NW` would mean that `NW` will be replaced with `NW`. Replacement matching is case insensitive. So you can enter `nw` too. You can also specify word groups for replacement: `eating=go eating`, for instance.
+In [`replacements.rmd`](server/src/main/resources/replacements.rmd), you can specify replacement words for other words. For instance, `Networking=NW` would mean that `NW` will be replaced with `Networking`. Replacement matching is case insensitive. So you can enter `nw` too. You can also specify word groups for replacement: `eating=go eating`, for instance.
 
 ### Definitions
 In [`definitons.rmd`](server/src/main/resources/definitions.rmd), you can specify definitions or synonyms for system understood words and numbers. For instance, `1=one` would mean that the application understands `one` too. Definitions are case insensitive. You do not have to specify definitions or synonyms. You can use any of the following by default (list of all system understood words and digits):
@@ -69,7 +69,7 @@ In [`definitons.rmd`](server/src/main/resources/definitions.rmd), you can specif
 * dat (day after tomorrow)
 
 ### Templates
-In [`templates.rmd`](server/src/main/resources/templates.rmd), you can spedify custom templates so the application understands your input. For instance, with `[DURATION] [UNIT] before the [DATE] at [TIME] [TEXT];-` you would be able enter something like `[Remind me] two days before the 31.12.2019 at 14:30 to go to the grocery store` ('two' and 'days' have to be specified in [`definitons.rmd`](server/src/main/resources/definitions.rmd)). The `-` after the semicolon tells the application that `[DATE]` must be subtracted with `[UNIT]` and `[DURATION]`. A `+` (and every other symbol) indicates an addition. 
+In [`templates.rmd`](server/src/main/resources/templates.rmd), you can specify custom templates so the application understands your input. For instance, with `[DURATION] [UNIT] before the [DATE] at [TIME] [TEXT];-` you would be able to enter something like `[Remind me] two days before the 31.12.2019 at 14:30 to go to the grocery store` ('two' and 'days' have to be specified in [`definitons.rmd`](server/src/main/resources/definitions.rmd)). The `-` after the semicolon tells the application that `[DATE]` must be subtracted with `[UNIT]` and `[DURATION]`. A `+` (and every other symbol) indicates an addition. 
 
 * [DATE] can be a date (yyyy-MM-dd, dd-MM-yyyy, dd.MM.yyyy) or today, tomorrow or dat (day after tomorrow)
 * [TIME] can be a time (HH:mm oder HH)
@@ -80,13 +80,16 @@ In [`templates.rmd`](server/src/main/resources/templates.rmd), you can spedify c
 Only modify [`templates.rmd`](server/src/main/resources/templates.rmd) at your own risk.
 
 ## Prerequisite
-Make sure you have at least [Java 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html), at least [Maven 3](https://maven.apache.org/download.cgi) and at least [Node.js v10.15.3](https://nodejs.org/en/) installed.
+Note: You only need to install the Java Runtime Environment ([JRE](https://www.oracle.com/technetwork/java/javase/downloads/jre8-downloads-2133155.html)) to execute the project. However, for building the jar, you require the following things:
+
+Make sure you have at least [Java 13](https://www.oracle.com/technetwork/java/javase/downloads/jdk13-downloads-5672538.html) ([Java 13 on Ubuntu](http://ubuntuhandbook.org/index.php/2019/10/how-to-install-oracle-java-13-in-ubuntu-18-04-16-04-19-04/)), at least [Maven 3](https://maven.apache.org/download.cgi) ([Maven 3 on Ubuntu](https://linuxize.com/post/how-to-install-apache-maven-on-ubuntu-18-04/)) and at least [Node.js v10.15.3](https://nodejs.org/en/) (installed by default on Ubuntu) installed.
 
 Next, you need to install `Angular CLI`.
 ```
 npm install -g @angular/cli
 ```
 
+#### Local installation (only accessible via localhost)
 After successfully installing Angular, you need to generate a keystore. For this, we use `Keytool`. It is included with Java. So if you have troubles executing the command, use the absolute path to the keytool.exe (in the java bin folder). 
 Use the following command. **Do not change any of these parameters.** 
 ```
@@ -94,6 +97,20 @@ keytool -genkeypair -alias reminder -keyalg RSA -keysize 2048 -storetype PKCS12 
 ```
 Copy the `reminder.p12` file in to `server/src/main/resources/keystore`. You have to create `keystore` manually.
 
+Now you're ready to build the project.
+
+#### Public installation (accessible via an ip address or domain)
+In this case, you have to make minor changes to the application.
+First, you need to remove the content of `server/src/main/resources/application.properties`. This will ensure, that the application will not try to use any local certificate. 
+
+Second, you need to add your domain (not ip address!) to the security configuration. For this, navigate to `server/src/main/java/at/spengergasse/nvs/server/config/WebSecurityConfig.java` and find `         configuration.setAllowedOrigins(Collections.singletonList("https://localhost:4200"));`. You have to change `https://localhost:4200` to your domain. Otherwise, the requests will be blocked.
+
+Now you're ready to build the project.
+
 ## Deployment
-Now we need to build the project. You need to execute `mvn clean install` in the project root folder.
-Now the project is build. Navigate into `server/target`. and find the `server.jar` (with a version number). If you execute this file, you start the application. The application is running on `https://localhost:8080`. Have fun!
+### Build the project
+To build the project, you need to execute `mvn clean install` in the project **root folder**. Wait until finished.
+Now the project is build. Navigate into `server/target` and find the `server.jar` (with a version number).
+
+### Execute the project
+If you execute the `server.jar`, the application will start. You can simply execute it with `java -jar server.jar`. However, if you close the session, the application will stop. If you don't want this behaviour, use `nohup java -jar server.jar &` instead. With `nohup java -jar server.jar > log.txt &` you can change the log output to a custom file (default is `nohup.out`).
