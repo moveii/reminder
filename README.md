@@ -4,6 +4,8 @@ A reminder web application which uses predefined templates to support natural la
 Note: The application currently only fully supports German input.  
 
 ## Usage
+Note: If you don't accept the notfication alert, no notifications will be sent by this application. 
+
 First, you need to create an account. The username must be at least six and the password must be at least twelve characters long. 
 
 ![Registration Screen](https://user-images.githubusercontent.com/51756146/71550199-f217cc80-29ca-11ea-9991-b8a7c8b925ee.PNG)
@@ -89,8 +91,15 @@ Next, you need to install `Angular CLI`.
 npm install -g @angular/cli
 ```
 
+Next, you need to install [Git](https://gitforwindows.org/) (for Ubuntu use `sudo apt install git`).
+
+Now, you need to clone the repository to your system.
+```
+git clone https://github.com/moveii/reminder.git
+```
+
 #### Local installation (only accessible via localhost)
-After successfully installing Angular, you need to generate a keystore. For this, we use `Keytool`. It is included with Java. So if you have troubles executing the command, use the absolute path to the keytool.exe (in the java bin folder). 
+In this case, you have to generate a keystore. For this, we use `Keytool`. It is included with Java. So if you have troubles executing the command, use the absolute path to the keytool.exe (in the java bin folder). 
 Use the following command. **Do not change any of these parameters.** 
 ```
 keytool -genkeypair -alias reminder -keyalg RSA -keysize 2048 -storetype PKCS12 -keystore reminder.p12 -validity 3650 -storepass a9f14591-1c46-45fb-a489-946cf53d7f22
@@ -103,7 +112,7 @@ Now you're ready to build the project.
 In this case, you have to make minor changes to the application.
 First, you need to remove the content of `server/src/main/resources/application.properties`. This will ensure, that the application will not try to use any local certificate. 
 
-Second, you need to add your domain (not ip address!) to the security configuration. For this, navigate to `server/src/main/java/at/spengergasse/nvs/server/config/WebSecurityConfig.java` and find `         configuration.setAllowedOrigins(Collections.singletonList("https://localhost:4200"));`. You have to change `https://localhost:4200` to your domain. Otherwise, the requests will be blocked.
+Second, you need to add your domain (not ip address!) to the security configuration. For this, navigate to `server/src/main/java/at/spengergasse/nvs/server/config/WebSecurityConfig.java` and find `         configuration.setAllowedOrigins(Collections.singletonList("https://localhost:4200"));`. You have to change `https://localhost:4200` to your domain (e.g. reminder.github.com). Otherwise, the requests will be blocked.
 
 Now you're ready to build the project.
 
