@@ -21,7 +21,7 @@
         <jwt.version>0.9.0</jwt.version>
         <modelmapper.version>2.3.5</modelmapper.version>
         <apache-commons-lang.version>3.9</apache-commons-lang.version>
-        <apache-commons-io.version>2.6</apache-commons-io.version>
+        <apache-commons-io.version>2.7</apache-commons-io.version>
         <commons-validator.version>1.6</commons-validator.version>
 
         <maven-surefire.version>3.0.0-M4</maven-surefire.version>
